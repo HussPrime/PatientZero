@@ -598,7 +598,7 @@ function App() {
         borderBottom: `1px solid ${C.border}`, background: C.panelLo,
         position: 'sticky', top: 0, zIndex: 10,
       }}>
-        <Logo size={30} />
+        <img src="./logo.png" style={{height: 30 }} />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: 0.5 }}>Patient Zero</div>
           <div style={{ fontSize: 10.5, color: C.text3, letterSpacing: 1.4, textTransform: 'uppercase' }}>
