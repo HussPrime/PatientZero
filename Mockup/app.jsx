@@ -589,7 +589,7 @@ function App() {
       const last = prev[prev.length - 1];
       if (last && last.h === counts.h && last.i === counts.i && last.r === counts.r) return prev;
       const next = [...prev, counts];
-      return next.length > 200 ? next.slice(next.length - 200) : next;
+      return next;
     });
   }, [agents, running]);
 
