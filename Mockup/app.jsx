@@ -63,10 +63,10 @@ const Logo = ({ size = 32 }) => (
 );
 
 // ---------- Slider primitive ----------
-function Slider({ label, value, min, max, step = 1, onChange, suffix = '', hint }) {
+function Slider({ label, value, min, max, step = 1, onChange, suffix = '', hint, disabled = false }) {
   const pct = ((value - min) / (max - min)) * 100;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, opacity: disabled ? 0.55 : 1 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
         <span style={{ fontSize: 12, color: C.text2, letterSpacing: 0.2 }}>{label}</span>
         <span style={{ fontSize: 13, color: C.text, fontVariantNumeric: 'tabular-nums', fontWeight: 500 }}>
@@ -83,11 +83,11 @@ function Slider({ label, value, min, max, step = 1, onChange, suffix = '', hint 
           width: `${pct}%`, background: `linear-gradient(90deg, ${C.recovered}, ${C.healthy})`,
           borderRadius: 2,
         }} />
-        <input type="range" min={min} max={max} step={step} value={value}
+        <input type="range" min={min} max={max} step={step} value={value} disabled={disabled}
                onChange={(e) => onChange(Number(e.target.value))}
                style={{
                  position: 'absolute', inset: 0, width: '100%', appearance: 'none',
-                 background: 'transparent', cursor: 'pointer', margin: 0,
+                 background: 'transparent', cursor: disabled ? 'not-allowed' : 'pointer', margin: 0,
                }} />
       </div>
       {hint && <div style={{ fontSize: 11, color: C.text3 }}>{hint}</div>}
@@ -96,38 +96,33 @@ function Slider({ label, value, min, max, step = 1, onChange, suffix = '', hint 
 }
 
 // ---------- Toggle ----------
-function Toggle({ checked, onChange }) {
+function Toggle({ checked, onChange, disabled = false }) {
   return (
-    <button onClick={() => onChange(!checked)}
+    <button onClick={() => !disabled && onChange(!checked)} disabled={disabled}
             style={{
               width: 36, height: 20, borderRadius: 10, border: 'none', padding: 2,
               background: checked ? C.healthy : 'rgba(148,163,184,0.2)',
-              cursor: 'pointer', transition: 'background .15s', display: 'flex',
+              cursor: disabled ? 'not-allowed' : 'pointer', transition: 'background .15s', display: 'flex',
               justifyContent: checked ? 'flex-end' : 'flex-start',
+              opacity: disabled ? 0.55 : 1,
             }}>
       <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }} />
     </button>
   );
 }
 
-// ---------- Configuration modal ----------
-function ConfigModal({ params, setParams, onStart, onReset, onClose }) {
+// ---------- Configuration panel ----------
+function ConfigPanel({ params, setParams, onStart, onReset, onClose, disabled = false }) {
   const set = (k) => (v) => setParams({ ...params, [k]: v });
   return (
     <div style={{
-      position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'rgba(7, 12, 24, 0.62)', backdropFilter: 'blur(6px)',
-      WebkitBackdropFilter: 'blur(6px)', zIndex: 50,
+      background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12,
+      overflow: 'hidden', display: 'flex', flexDirection: 'column',
+      opacity: disabled ? 0.62 : 1, filter: disabled ? 'grayscale(0.25)' : 'none',
     }}>
+      {/* Header */}
       <div style={{
-        width: 720, maxWidth: 'calc(100% - 48px)', maxHeight: 'calc(100vh - 48px)',
-        background: C.panel, border: `1px solid ${C.borderHi}`,
-        borderRadius: 16, boxShadow: '0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(229, 57, 53, 0.06)',
-        overflow: 'hidden', display: 'flex', flexDirection: 'column',
-      }}>
-        {/* Header */}
-        <div style={{
-          padding: '18px 24px', borderBottom: `1px solid ${C.border}`,
+          padding: '14px 16px', borderBottom: `1px solid ${C.border}`,
           display: 'flex', alignItems: 'center', gap: 14,
           background: `linear-gradient(180deg, ${C.panelHi}, ${C.panel})`,
         }}>
@@ -146,51 +141,52 @@ function ConfigModal({ params, setParams, onStart, onReset, onClose }) {
               Paramétrez la population et les variables épidémiologiques avant lancement.
             </div>
           </div>
-          <button onClick={onClose}
+          <button onClick={onClose} disabled={disabled}
                   style={{ background: 'transparent', border: `1px solid ${C.border}`,
                            color: C.text2, width: 32, height: 32, borderRadius: 8,
-                           cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                           cursor: disabled ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                           opacity: disabled ? 0.5 : 1 }}>
             <IconClose size={14} />
           </button>
         </div>
 
         {/* Body */}
-        <div style={{ padding: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, overflow: 'auto' }}>
+        <div style={{ padding: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, overflow: 'auto' }}>
           <SectionLabel>Population</SectionLabel>
           <SectionLabel>Épidémiologie</SectionLabel>
 
           <Slider label="Taille de la population" value={params.population}
                   min={50} max={800} step={10} onChange={set('population')}
-                  suffix=" individus" hint="Nombre total de personnes simulées" />
+                  suffix=" individus" hint="Nombre total de personnes simulées" disabled={disabled} />
 
           <Slider label="Probabilité de transmission" value={params.transmission}
                   min={0} max={100} step={1} onChange={set('transmission')}
-                  suffix=" %" hint="Chance d'infection par contact" />
+                  suffix=" %" hint="Chance d'infection par contact" disabled={disabled} />
 
           <Slider label="Patients zéro" value={params.initialInfected}
                   min={1} max={20} step={1} onChange={set('initialInfected')}
-                  suffix="" hint="Infectés au lancement" />
+                  suffix="" hint="Infectés au lancement" disabled={disabled} />
 
           <Slider label="Taux de guérison" value={params.recovery}
                   min={0} max={100} step={1} onChange={set('recovery')}
-                  suffix=" %" hint="Probabilité de guérison après infection" />
+                  suffix=" %" hint="Probabilité de guérison après infection" disabled={disabled} />
 
           <Slider label="Durée moyenne de l'infection" value={params.duration}
                   min={20} max={400} step={10} onChange={set('duration')}
-                  suffix=" pas" hint="Pas de simulation avant issue" />
+                  suffix=" pas" hint="Pas de simulation avant issue" disabled={disabled} />
 
           <Slider label="Rayon d'infection" value={params.radius}
                   min={4} max={40} step={1} onChange={set('radius')}
-                  suffix=" px" hint="Distance de contagion entre individus" />
+                  suffix=" px" hint="Distance de contagion entre individus" disabled={disabled} />
 
           <Slider label="Vitesse initiale" value={params.speed}
                   min={1} max={5} step={1} onChange={set('speed')}
-                  suffix="×" hint="Multiplicateur de pas de temps" />
+                  suffix="×" hint="Multiplicateur de pas de temps" disabled={disabled} />
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 12, color: C.text2 }}>Déplacement aléatoire</span>
-              <Toggle checked={params.random} onChange={set('random')} />
+              <Toggle checked={params.random} onChange={set('random')} disabled={disabled} />
             </div>
             <div style={{ fontSize: 11, color: C.text3 }}>
               Mouvement brownien des individus dans la zone
@@ -200,7 +196,7 @@ function ConfigModal({ params, setParams, onStart, onReset, onClose }) {
 
         {/* Footer */}
         <div style={{
-          padding: '16px 24px', borderTop: `1px solid ${C.border}`,
+          padding: '14px 16px', borderTop: `1px solid ${C.border}`,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           background: C.panelLo,
         }}>
@@ -209,27 +205,28 @@ function ConfigModal({ params, setParams, onStart, onReset, onClose }) {
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             <button onClick={onReset}
+                    disabled={disabled}
                     style={{
                       padding: '10px 16px', borderRadius: 8, fontSize: 13, fontWeight: 500,
                       background: 'transparent', border: `1px solid ${C.border}`,
-                      color: C.text2, cursor: 'pointer',
+                      color: C.text2, cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.55 : 1,
                     }}>
               Réinitialiser les paramètres
             </button>
             <button onClick={onStart}
+                    disabled={disabled}
                     style={{
                       padding: '10px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600,
                       background: C.infected, border: '1px solid rgba(229, 57, 53, 0.5)',
-                      color: '#fff', cursor: 'pointer',
+                      color: '#fff', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.55 : 1,
                       boxShadow: '0 4px 14px rgba(229, 57, 53, 0.35)',
                       display: 'flex', alignItems: 'center', gap: 8,
                     }}>
-              <IconPlay size={13} /> Démarrer la simulation
-            </button>
-          </div>
-        </div>
+          <IconPlay size={13} /> Démarrer la simulation
+        </button>
       </div>
     </div>
+  </div>
   );
 }
 
@@ -417,6 +414,31 @@ function LineChart({ history, width, height }) {
   return <canvas ref={ref} style={{ display: 'block' }} />;
 }
 
+function ResponsiveLineChart({ history, height = 378 }) {
+  const boxRef = useRef(null);
+  const [width, setWidth] = useState(320);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const update = () => setWidth(Math.max(240, Math.floor(box.clientWidth)));
+    update();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', update);
+      return () => window.removeEventListener('resize', update);
+    }
+    const ro = new ResizeObserver(update);
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div ref={boxRef} style={{ width: '100%', minWidth: 0 }}>
+      <LineChart history={history} width={width} height={height} />
+    </div>
+  );
+}
+
 // ---------- Main App ----------
 const DEFAULTS = {
   population: 320,
@@ -450,24 +472,42 @@ function App() {
   const [agents, setAgents] = useState([]);
   const [history, setHistory] = useState([]);
 
+  const createAgent = useCallback((state = 0) => ({
+    x: 20 + Math.random() * (SIM_W - 40),
+    y: 20 + Math.random() * (SIM_H - 40),
+    vx: (Math.random() - 0.5) * 1.2,
+    vy: (Math.random() - 0.5) * 1.2,
+    state,
+    timer: 0,
+  }), []);
+
   // initialise on (re)start
   const initSimulation = useCallback(() => {
     const arr = [];
     const N = params.population;
     for (let i = 0; i < N; i++) {
-      arr.push({
-        x: 20 + Math.random() * (SIM_W - 40),
-        y: 20 + Math.random() * (SIM_H - 40),
-        vx: (Math.random() - 0.5) * 1.2,
-        vy: (Math.random() - 0.5) * 1.2,
-        state: i < params.initialInfected ? 1 : 0,
-        timer: 0,
-      });
+      arr.push(createAgent(i < params.initialInfected ? 1 : 0));
     }
     setAgents(arr);
     setHistory([{ h: N - params.initialInfected, i: params.initialInfected, r: 0 }]);
     setTick(0);
-  }, [params]);
+  }, [createAgent, params]);
+
+  useEffect(() => {
+    if (running) return;
+    setAgents((prev) => {
+      const next = prev.slice(0, params.population).map((a, i) => ({
+        ...a,
+        state: i < params.initialInfected ? 1 : 0,
+        timer: i < params.initialInfected ? 0 : a.timer,
+      }));
+      while (next.length < params.population) {
+        next.push(createAgent(next.length < params.initialInfected ? 1 : 0));
+      }
+      return next;
+    });
+    setHistory([{ h: params.population - params.initialInfected, i: params.initialInfected, r: 0 }]);
+  }, [createAgent, params.initialInfected, params.population, running]);
 
   // step the simulation
   useEffect(() => {
@@ -563,7 +603,7 @@ function App() {
 
   const handleStart = () => {
     initSimulation();
-    setShowConfig(false);
+    setShowConfig(true);
     setRunning(true);
     setPaused(false);
   };
@@ -602,21 +642,9 @@ function App() {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: 0.5 }}>Patient Zero</div>
           <div style={{ fontSize: 10.5, color: C.text3, letterSpacing: 1.4, textTransform: 'uppercase' }}>
-            Epidemic Simulator · v0.4
+            Epidemic Simulator · v0.0
           </div>
         </div>
-
-        <nav style={{ marginLeft: 32, display: 'flex', gap: 4 }}>
-          {['Simulation', 'Données', 'Modèle', 'À propos'].map((n, i) => (
-            <button key={n} style={{
-              padding: '8px 12px', fontSize: 12.5,
-              background: i === 0 ? 'rgba(229, 57, 53, 0.08)' : 'transparent',
-              color: i === 0 ? C.text : C.text2,
-              border: 'none', borderRadius: 6, cursor: 'pointer',
-              fontWeight: i === 0 ? 500 : 400,
-            }}>{n}</button>
-          ))}
-        </nav>
 
         <div style={{ flex: 1 }} />
 
@@ -650,7 +678,6 @@ function App() {
                   color: C.text2, cursor: 'pointer',
                   display: 'flex', alignItems: 'center', gap: 6,
                 }}>
-          <IconSettings size={12} /> Configurer
         </button>
       </header>
 
@@ -660,20 +687,20 @@ function App() {
         gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: 20,
         gridTemplateRows: 'auto auto', alignItems: 'start',
       }}>
+        {/* Stat cards */}
+        <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 12 }}>
+          <StatCard label="Population" value={total || params.population} color={C.text}
+                    total={total || params.population} icon={<IconUsers size={14} />} />
+          <StatCard label="Sains" value={counts.h} color={C.healthy}
+                    total={total} icon={<IconDot size={10} />} />
+          <StatCard label="Infectés" value={counts.i} color={C.infected}
+                    total={total} icon={<IconDot size={10} />} />
+          <StatCard label="Guéris" value={counts.r} color={C.recovered}
+                    total={total} icon={<IconDot size={10} />} />
+        </div>
+
         {/* LEFT COLUMN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
-          {/* Stat cards */}
-          <div style={{ display: 'flex', gap: 12 }}>
-            <StatCard label="Population" value={total || params.population} color={C.text}
-                      total={total || params.population} icon={<IconUsers size={14} />} />
-            <StatCard label="Sains" value={counts.h} color={C.healthy}
-                      total={total} icon={<IconDot size={10} />} />
-            <StatCard label="Infectés" value={counts.i} color={C.infected}
-                      total={total} icon={<IconDot size={10} />} />
-            <StatCard label="Guéris" value={counts.r} color={C.recovered}
-                      total={total} icon={<IconDot size={10} />} />
-          </div>
-
           {/* Sim canvas */}
           <div style={{
             background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12,
@@ -697,49 +724,65 @@ function App() {
                 Rendu canvas · 30 fps
               </span>
             </div>
-            <div style={{ padding: 12, position: 'relative' }}>
-              <SimCanvas agents={agents} radius={params.radius}
-                         width={SIM_W} height={SIM_H}
-                         showRadius={tweaks.showHalos !== false} paused={paused} />
-              {/* Legend overlay */}
+            <div style={{
+              padding: 12, display: 'grid',
+              gridTemplateColumns: `${SIM_W}px minmax(320px, 1fr)`, gap: 12,
+              alignItems: 'stretch',
+            }}>
+              <div style={{ position: 'relative' }}>
+                <SimCanvas agents={agents} radius={params.radius}
+                           width={SIM_W} height={SIM_H}
+                           showRadius={tweaks.showHalos !== false} paused={paused} />
+                {/* Legend overlay */}
+                <div style={{
+                  position: 'absolute', left: 10, bottom: 10, display: 'flex', gap: 14,
+                  padding: '8px 12px', background: 'rgba(15, 23, 42, 0.78)',
+                  border: `1px solid ${C.border}`, borderRadius: 8,
+                  backdropFilter: 'blur(6px)',
+                }}>
+                  <Legend color={C.healthy} label="Sain" />
+                  <Legend color={C.infected} label="Infecté" />
+                  <Legend color={C.recovered} label="Guéri" />
+                </div>
+              </div>
+
               <div style={{
-                position: 'absolute', left: 22, bottom: 22, display: 'flex', gap: 14,
-                padding: '8px 12px', background: 'rgba(15, 23, 42, 0.78)',
-                border: `1px solid ${C.border}`, borderRadius: 8,
-                backdropFilter: 'blur(6px)',
+                minWidth: 0, height: SIM_H, background: C.panelLo,
+                border: `1px solid ${C.border}`, borderRadius: 10, overflow: 'hidden',
+                display: 'flex', flexDirection: 'column',
               }}>
-                <Legend color={C.healthy} label="Sain" />
-                <Legend color={C.infected} label="Infecté" />
-                <Legend color={C.recovered} label="Guéri" />
+                <div style={{
+                  padding: '12px 14px', borderBottom: `1px solid ${C.border}`,
+                  display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+                }}>
+                  <IconActivity size={14} />
+                  <span style={{ fontSize: 12.5, fontWeight: 500 }}>
+                    Évolution dans le temps
+                  </span>
+                  <div style={{ flex: 1 }} />
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <Legend color={C.healthy} label="Sains" />
+                    <Legend color={C.infected} label="Infectés" />
+                    <Legend color={C.recovered} label="Guéris" />
+                  </div>
+                </div>
+                <div style={{ padding: 12, flex: 1, minHeight: 0 }}>
+                  <ResponsiveLineChart
+                    history={history.length ? history : [{ h: params.population, i: 0, r: 0 }]}
+                    height={SIM_H - 70}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Chart */}
-          <div style={{
-            background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12,
-            overflow: 'hidden',
-          }}>
-            <div style={{
-              padding: '12px 16px', borderBottom: `1px solid ${C.border}`,
-              display: 'flex', alignItems: 'center', gap: 10,
-            }}>
-              <IconActivity size={14} />
-              <span style={{ fontSize: 12.5, fontWeight: 500 }}>
-                Évolution dans le temps
-              </span>
-              <div style={{ flex: 1 }} />
-              <div style={{ display: 'flex', gap: 14 }}>
-                <Legend color={C.healthy} label="Sains" />
-                <Legend color={C.infected} label="Infectés" />
-                <Legend color={C.recovered} label="Guéris" />
-              </div>
-            </div>
-            <div style={{ padding: 12 }}>
-              <LineChart history={history.length ? history : [{ h: params.population, i: 0, r: 0 }]}
-                         width={760} height={180} />
-            </div>
-          </div>
+          {/* Configuration panel */}
+          {showConfig && (
+            <ConfigPanel params={params} setParams={setParams}
+                         onStart={handleStart} onReset={handleResetParams}
+                         onClose={() => setShowConfig(false)}
+                         disabled={running} />
+          )}
         </div>
 
         {/* RIGHT COLUMN — control panel */}
@@ -807,7 +850,6 @@ function App() {
           {/* Run info */}
           <Panel title="Session" icon={<IconWave size={13} />}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <Row k="ID de simulation" v="#PZ-04217" mono />
               <Row k="Modèle" v="SIR (susceptible–infected–recovered)" />
               <Row k="R₀ estimé" v={(params.transmission / Math.max(1, 100 - params.recovery) * 1.4).toFixed(2)} mono />
               <Row k="Durée écoulée" v={`${tick} pas`} mono />
@@ -816,13 +858,6 @@ function App() {
         </aside>
       </main>
 
-      {/* Modal */}
-      {showConfig && (
-        <ConfigModal params={params} setParams={setParams}
-                     onStart={handleStart} onReset={handleResetParams}
-                     onClose={() => running && setShowConfig(false)} />
-      )}
-
       {/* Tweaks panel */}
       {window.TweaksPanel && (
         <window.TweaksPanel title="Tweaks">
@@ -830,7 +865,7 @@ function App() {
             <window.TweakToggle label="Halos d'infection"
                                 value={tweaks.showHalos !== false}
                                 onChange={(v) => setTweak('showHalos', v)} />
-            <window.TweakToggle label="Modale ouverte"
+            <window.TweakToggle label="Configuration ouverte"
                                 value={showConfig}
                                 onChange={setShowConfig} />
           </window.TweakSection>
