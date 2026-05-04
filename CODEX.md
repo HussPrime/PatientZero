@@ -449,12 +449,7 @@ L’application doit rester utilisable et compréhensible :
 
 ## 17. Documentation attendue dans le code
 
-Ajouter des commentaires uniquement pour expliquer :
-
-- une règle de propagation ;
-- un choix de performance ;
-- l’intégration React/p5.js ;
-- une partie difficile à comprendre.
+Fais en sorte que le code sois facilement documentable avec jsdoc.
 
 Ne pas commenter des évidences.
 
@@ -513,6 +508,8 @@ Lors d’une demande de modification :
 11. A la fin de chaque actions, vérifier que tout fonctionne encore
 12. Ne modifier que ce que je demande et ce qu'il faut pour le bon fonctionnement (ne change pas ce qu'il n'y a pas besoin)
 13. Tu peux créer un fichier .md au même niveau que le fichier CODEX.md pour toute modification que tu fais que tout les développeur doivent savoir (dont toi). Par exemple un changement dans la charte graphique.
+14. Pas d'emoji dans le code
+15. Une fois que t'as finis de coder, génère les tests (des tests simple)
 
 ---
 
