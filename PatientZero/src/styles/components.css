@@ -760,3 +760,9 @@
     flex-direction: column;
   }
 }
+
+@media (max-width: 768px) {
+  .setup-grid {
+    grid-template-columns: 1fr;
+  }
+}
