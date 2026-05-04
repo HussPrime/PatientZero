@@ -24,12 +24,12 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: PatientZero
 
       - name: Setup Git
         run: |
-          git config --global user.email "hussmzd@gmail.com"
+          git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
         working-directory: PatientZero
 
