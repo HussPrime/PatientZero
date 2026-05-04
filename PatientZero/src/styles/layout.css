@@ -1,0 +1,92 @@
+.app-shell {
+  min-height: 100vh;
+  background: #0f172a;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  padding: 0 24px;
+  background: #172033;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: auto;
+}
+
+.brand__logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.brand p {
+  margin: 2px 0 0;
+  color: #7b8699;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dashboard {
+  display: grid;
+  gap: 20px;
+  max-width: 1540px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.dashboard__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.dashboard__content {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.dashboard__visuals {
+  display: grid;
+  grid-template-columns: minmax(520px, 1.45fr) minmax(320px, 0.9fr);
+  gap: 16px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.dashboard__sidebar {
+  display: grid;
+  gap: 16px;
+}
+
+@media (max-width: 1240px) {
+  body {
+    min-width: 0;
+  }
+
+  .dashboard__main,
+  .dashboard__visuals,
+  .setup-grid {
+    grid-template-columns: 1fr;
+  }
+}
