@@ -57,5 +57,33 @@ describe("Population", () => {
       () => new Population({ populationSize: 3, initialInfected: 4, simulationWidth: 100, simulationHeight: 80 }),
     ).toThrow("initialInfected cannot be greater than populationSize.");
   });
+
+  it("keeps existing individuals when the population grows", () => {
+    const population = new Population(
+      { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80 },
+      createStableRng(),
+    );
+    const initialIndividuals = population.generate();
+    const firstIndividual = initialIndividuals[0];
+
+    population.resize(5);
+
+    expect(population.getTotal()).toBe(5);
+    expect(population.getIndividuals()[0]).toBe(firstIndividual);
+  });
+
+  it("keeps remaining individuals when the population shrinks", () => {
+    const population = new Population(
+      { populationSize: 5, initialInfected: 1, simulationWidth: 100, simulationHeight: 80 },
+      createStableRng(),
+    );
+    const initialIndividuals = population.generate();
+    const firstIndividual = initialIndividuals[0];
+
+    population.resize(3);
+
+    expect(population.getTotal()).toBe(3);
+    expect(population.getIndividuals()[0]).toBe(firstIndividual);
+  });
 });
 

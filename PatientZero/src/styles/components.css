@@ -257,7 +257,8 @@
 .simulation-canvas {
   position: relative;
   flex: 1;
-  min-height: 520px;
+  height: clamp(320px, 38vw, 520px);
+  min-height: 260px;
   margin: 12px;
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.14);
@@ -267,6 +268,13 @@
     linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
     #0b1424;
   background-size: 40px 40px;
+  cursor: pointer;
+  outline: none;
+}
+
+.simulation-canvas:focus-visible {
+  border-color: rgba(30, 136, 229, 0.52);
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.14);
 }
 
 .simulation-empty-state {
@@ -416,8 +424,19 @@
     box-shadow 150ms ease;
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+  transform: none;
+}
+
 .button:hover {
   transform: translateY(-1px);
+}
+
+.button:disabled:hover {
+  box-shadow: none;
+  transform: none;
 }
 
 .button--wide {
@@ -434,15 +453,73 @@
   box-shadow: 0 8px 18px rgba(253, 216, 53, 0.18);
 }
 
+.button--success {
+  border-color: rgba(67, 160, 71, 0.4);
+  background: rgba(67, 160, 71, 0.16);
+  color: #8ee894;
+  box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.08);
+}
+
+.button--success:hover {
+  border-color: rgba(67, 160, 71, 0.5);
+  background: rgba(67, 160, 71, 0.22);
+  color: #b4f3b8;
+  box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.12);
+}
+
+.button--warning {
+  border-color: rgba(253, 216, 53, 0.42);
+  background: rgba(253, 216, 53, 0.16);
+  color: #fdd835;
+  box-shadow: 0 0 0 3px rgba(253, 216, 53, 0.08);
+}
+
+.button--warning:hover {
+  border-color: rgba(253, 216, 53, 0.55);
+  background: rgba(253, 216, 53, 0.22);
+  color: #ffe45c;
+  box-shadow: 0 0 0 3px rgba(253, 216, 53, 0.12);
+}
+
+.button--primary {
+  border-color: rgba(30, 136, 229, 0.4);
+  background: rgba(30, 136, 229, 0.16);
+  color: #8cc8ff;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.08);
+}
+
+.button--primary:hover {
+  border-color: rgba(30, 136, 229, 0.5);
+  background: rgba(30, 136, 229, 0.22);
+  color: #b5dcff;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
+}
+
 .button--danger {
-  background: #e53935;
+  background: #e53835e1;
   border-color: rgba(229, 57, 53, 0.5);
 }
 
 .button--danger:hover {
-  background: #f04440;
+  background: #eb1f1c;
   box-shadow: 0 8px 18px rgba(229, 57, 53, 0.2);
 }
+
+/*
+.button--danger {
+  border-color: rgba(67, 160, 71, 0.4);
+  background: rgba(67, 160, 71, 0.16);
+  color: #8ee894;
+  box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.08);
+}
+
+.button--danger:hover {
+  border-color: rgba(67, 160, 71, 0.5);
+  background: rgba(67, 160, 71, 0.22);
+  color: #b4f3b8;
+  box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.12);
+}
+*/
 
 .button--ghost {
   background: transparent;
@@ -453,6 +530,13 @@
   border-color: rgba(148, 163, 184, 0.3);
   background: rgba(148, 163, 184, 0.08);
   color: #f5f5f5;
+}
+
+.button--stop:hover {
+  border-color: rgba(229, 57, 53, 0.4);
+  background: rgba(229, 57, 53, 0.18);
+  color: #e53935;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.08);
 }
 
 .speed-selector,
@@ -564,6 +648,32 @@
     box-shadow 150ms ease;
 }
 
+.setup-panel--disabled {
+  border-color: rgba(148, 163, 184, 0.1);
+  background: #1a2435;
+}
+
+.setup-panel--disabled .panel__header,
+.setup-panel--disabled .setup-actions {
+  background: #1a2435;
+}
+
+.setup-panel--disabled .setup-grid,
+.setup-panel--disabled .setup-actions {
+  opacity: 0.72;
+}
+
+.setup-panel--disabled .range-field,
+.setup-panel--disabled .toggle-row {
+  cursor: not-allowed;
+}
+
+.setup-panel--disabled .range-field:hover,
+.setup-panel--disabled .toggle-row:hover {
+  background: transparent;
+  box-shadow: none;
+}
+
 .range-field:hover {
   background: rgba(148, 163, 184, 0.06);
   box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
@@ -612,7 +722,6 @@
 
 .range-field__track > span {
   background: linear-gradient(90deg, #1e88e5, #43a047);
-  transition: width 120ms ease;
 }
 
 .range-field input {
@@ -623,6 +732,22 @@
   appearance: none;
   background: transparent;
   cursor: pointer;
+}
+
+.range-field input:disabled {
+  cursor: not-allowed;
+}
+
+.range-field input:disabled::-webkit-slider-thumb {
+  background: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.range-field input:disabled::-moz-range-thumb {
+  background: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 .range-field input::-webkit-slider-thumb {
@@ -728,6 +853,11 @@
   height: 21px;
   accent-color: #43a047;
   cursor: pointer;
+}
+
+.toggle-row input:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .setup-actions {
