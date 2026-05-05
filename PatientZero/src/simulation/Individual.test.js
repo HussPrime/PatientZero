@@ -28,5 +28,25 @@ describe("Individual", () => {
 
     expect(individual.isRecovered()).toBe(true);
   });
+
+  it("uses the speed multiplier when moving", () => {
+    const individual = new Individual({ id: 1, x: 10, y: 20, vx: 2, vy: -1 });
+
+    individual.move(100, 100, 3);
+
+    expect(individual.x).toBe(16);
+    expect(individual.y).toBe(17);
+  });
+
+  it("bounces using the circle radius as the visible boundary", () => {
+    const individual = new Individual({ id: 1, x: 96, y: 4, vx: 2, vy: -2 });
+
+    individual.move(100, 100, 1, 5);
+
+    expect(individual.x).toBe(95);
+    expect(individual.y).toBe(5);
+    expect(individual.vx).toBe(-2);
+    expect(individual.vy).toBe(2);
+  });
 });
 

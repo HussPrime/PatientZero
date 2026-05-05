@@ -1,5 +1,5 @@
 // Purpose: Root React component that wires the dashboard, settings, controls, and future simulation state together.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ControlsPanel } from "./components/ControlsPanel";
 import { DashboardLayout } from "./components/DashboardLayout";
 import { EvolutionChart } from "./components/EvolutionChart";
@@ -24,6 +24,7 @@ const INITIAL_PARAMETERS = {
 };
 
 const POPULATION_PREVIEW_FIELDS = new Set(["populationSize", "initialInfected", "initialSpeed"]);
+const BASE_TICK_INTERVAL_MS = 1000;
 
 // Creates a generated population from the current UI parameters.
 const createPopulationFromParameters = (parameters) => {
@@ -77,6 +78,23 @@ function App() {
     [population],
   );
   const isSetupDisabled = status !== "Prêt";
+  const isSimulationRunning = status === "Simulation en cours";
+  const isSimulationStarted = status === "Simulation en cours" || status === "Pause";
+
+  useEffect(() => {
+    if (!isSimulationRunning) {
+      return undefined;
+    }
+
+    const intervalMs = BASE_TICK_INTERVAL_MS / parameters.simulationSpeed;
+    const intervalId = window.setInterval(() => {
+      setTick((currentTick) => currentTick + 1);
+    }, intervalMs);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [isSimulationRunning, parameters.simulationSpeed]);
 
   // Updates one simulation parameter while preserving the others.
   const updateParameter = (name, value) => {
@@ -106,7 +124,7 @@ function App() {
   // Starts the first version of the simulation flow.
   const startSimulation = () => {
     setStatus("Simulation en cours");
-    setTick(1);
+    setTick((currentTick) => (currentTick === 0 ? 1 : currentTick));
     scrollToSimulationPanel();
   };
 
@@ -134,6 +152,8 @@ function App() {
         <SimulationCanvas
           individuals={population?.getIndividuals() ?? []}
           infectionRadius={parameters.infectionRadius}
+          isRunning={isSimulationRunning}
+          simulationSpeed={parameters.simulationSpeed}
           onToggleRun={toggleSimulation}
         />
       }
@@ -162,9 +182,11 @@ function App() {
       setup={
         <SetupPanel
           disabled={isSetupDisabled}
+          isSimulationStarted={isSimulationStarted}
           values={parameters}
           onChange={updateParameter}
           onReset={resetParameters}
+          onStop={stopSimulation}
           onStart={startSimulation}
         />
       }

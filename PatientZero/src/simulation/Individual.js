@@ -66,18 +66,23 @@ export class Individual {
   }
 
   // Moves the individual and bounces them back inside the simulation bounds.
-  move(width, height) {
-    this.x += this.vx;
-    this.y += this.vy;
+  move(width, height, speedMultiplier = 1, radius = 0) {
+    this.x += this.vx * speedMultiplier;
+    this.y += this.vy * speedMultiplier;
 
-    if (this.x < 0 || this.x > width) {
+    const minX = radius;
+    const maxX = width - radius;
+    const minY = radius;
+    const maxY = height - radius;
+
+    if (this.x < minX || this.x > maxX) {
       this.vx *= -1;
-      this.x = Math.min(Math.max(this.x, 0), width);
+      this.x = Math.min(Math.max(this.x, minX), maxX);
     }
 
-    if (this.y < 0 || this.y > height) {
+    if (this.y < minY || this.y > maxY) {
       this.vy *= -1;
-      this.y = Math.min(Math.max(this.y, 0), height);
+      this.y = Math.min(Math.max(this.y, minY), maxY);
     }
 
     // TODO: Increment infectionTime during logical ticks once updateSimulation is added.

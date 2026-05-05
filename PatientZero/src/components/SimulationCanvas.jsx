@@ -47,15 +47,23 @@ const drawIndividual = (p, individual, infectionRadius) => {
   p.circle(x, y, radius * 2);
 };
 
-// Renders the simulation panel until the p5.js instance is connected.
-export function SimulationCanvas({ individuals = [], infectionRadius = 18, onToggleRun }) {
+// Renders the p5.js simulation panel and applies the current run speed.
+export function SimulationCanvas({
+  individuals = [],
+  infectionRadius = 18,
+  isRunning = false,
+  simulationSpeed = 1,
+  onToggleRun,
+}) {
   const containerRef = useRef(null);
-  const dataRef = useRef({ individuals, infectionRadius });
+  const dataRef = useRef({ individuals, infectionRadius, isRunning, simulationSpeed });
 
   useEffect(() => {
     dataRef.current.individuals = individuals;
     dataRef.current.infectionRadius = infectionRadius;
-  }, [individuals, infectionRadius]);
+    dataRef.current.isRunning = isRunning;
+    dataRef.current.simulationSpeed = simulationSpeed;
+  }, [individuals, infectionRadius, isRunning, simulationSpeed]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -81,7 +89,12 @@ export function SimulationCanvas({ individuals = [], infectionRadius = 18, onTog
 
       p.draw = () => {
         p.clear();
-        const { individuals: currentIndividuals, infectionRadius: currentRadius } = dataRef.current;
+        const {
+          individuals: currentIndividuals,
+          infectionRadius: currentRadius,
+          isRunning: currentIsRunning,
+          simulationSpeed: currentSpeed,
+        } = dataRef.current;
 
         if (currentIndividuals.length === 0) {
           p.noStroke();
@@ -90,6 +103,10 @@ export function SimulationCanvas({ individuals = [], infectionRadius = 18, onTog
         }
 
         currentIndividuals.forEach((individual) => {
+          if (currentIsRunning) {
+            individual.move(CANVAS_WIDTH, CANVAS_HEIGHT, currentSpeed, INDIVIDUAL_RADIUS);
+          }
+
           drawIndividual(p, individual, currentRadius);
         });
       };

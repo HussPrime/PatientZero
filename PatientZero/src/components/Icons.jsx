@@ -74,6 +74,16 @@ export function IconPlay(props) {
   );
 }
 
+// Renders a pause icon for temporarily stopping the running simulation.
+export function IconPause(props) {
+  return (
+    <Icon fill="currentColor" {...props}>
+      <path d="M7 5h4v14H7z" stroke="none" />
+      <path d="M13 5h4v14h-4z" stroke="none" />
+    </Icon>
+  );
+}
+
 // Renders a reset icon for clearing the session.
 export function IconReset(props) {
   return (
