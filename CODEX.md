@@ -510,6 +510,8 @@ Lors d’une demande de modification :
 13. Tu peux créer un fichier .md au même niveau que le fichier CODEX.md pour toute modification que tu fais que tout les développeur doivent savoir (dont toi). Par exemple un changement dans la charte graphique.
 14. Pas d'emoji dans le code
 15. Une fois que t'as finis de coder, génère les tests (des tests simple)
+16. Pour les parties de code pas implémenter, ajoute des commentaire "TODO" en expliquant ce qu'il reste à faire
+17. Ajoute des commentaire pour expliquer l'utilité de chaque fichiers et fonctions que tu créer et modifie.
 
 ---
 
