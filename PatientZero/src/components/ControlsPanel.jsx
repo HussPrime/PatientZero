@@ -1,9 +1,19 @@
-import { IconBolt, IconReset, IconStop } from "./Icons";
+// Purpose: Provides the controls used to pause, stop, reset, and tune simulation speed.
+import { IconBolt, IconPlay, IconReset, IconStop } from "./Icons";
 
 const SPEED_OPTIONS = [1, 2, 3, 4, 5];
 
-export function ControlsPanel({ status, speed, onSpeedChange, onPause, onStop, onReset }) {
+// Renders command buttons and speed selection for the current session.
+export function ControlsPanel({ status, speed, onSpeedChange, onToggleRun, onStop, onReset }) {
   const speedIndex = Math.max(0, SPEED_OPTIONS.indexOf(speed));
+  const isRunning = status === "Simulation en cours";
+  const isPaused = status === "Pause";
+  const mainActionLabel = isRunning ? "Pause" : isPaused ? "Reprendre" : "Démarrer";
+  const mainActionClass = isRunning
+    ? "button button--warning"
+    : isPaused
+      ? "button button--primary"
+      : "button button--success";
 
   return (
     <section className="panel controls-panel">
@@ -20,10 +30,11 @@ export function ControlsPanel({ status, speed, onSpeedChange, onPause, onStop, o
       </div>
 
       <div className="control-actions">
-        <button className="button button--accent" onClick={onPause} type="button">
-          Pause
+        <button className={mainActionClass} onClick={onToggleRun} type="button">
+          {isRunning ? null : <IconPlay size={12} />}
+          {mainActionLabel}
         </button>
-        <button className="button button--ghost" onClick={onStop} type="button">
+        <button className="button button--ghost button--stop" onClick={onStop} type="button">
           <IconStop size={12} /> Stop
         </button>
         <button className="button button--ghost button--wide" onClick={onReset} type="button">

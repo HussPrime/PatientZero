@@ -1,3 +1,4 @@
+// Purpose: Represents one person in the epidemic simulation and stores their movement and health state.
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
 
 export class Individual {
@@ -29,22 +30,27 @@ export class Individual {
     this.infectionTime = state === INDIVIDUAL_STATES.INFECTED ? 0 : infectionTime;
   }
 
+  // Checks whether the individual can still be infected.
   isHealthy() {
     return this.state === INDIVIDUAL_STATES.HEALTHY;
   }
 
+  // Checks whether the individual is currently contagious.
   isInfected() {
     return this.state === INDIVIDUAL_STATES.INFECTED;
   }
 
+  // Checks whether the individual has finished the infection cycle.
   isRecovered() {
     return this.state === INDIVIDUAL_STATES.RECOVERED;
   }
 
+  // Returns the current health state.
   getState() {
     return this.state
   }
 
+  // Marks the individual as infected unless they are already recovered.
   infect() {
     if (this.isRecovered()) {
       return;
@@ -54,10 +60,12 @@ export class Individual {
     this.infectionTime = 0;
   }
 
+  // Marks the individual as recovered after the infection duration.
   recover() {
     this.state = INDIVIDUAL_STATES.RECOVERED;
   }
 
+  // Moves the individual and bounces them back inside the simulation bounds.
   move(width, height) {
     this.x += this.vx;
     this.y += this.vy;
@@ -71,8 +79,11 @@ export class Individual {
       this.vy *= -1;
       this.y = Math.min(Math.max(this.y, 0), height);
     }
+
+    // TODO: Increment infectionTime during logical ticks once updateSimulation is added.
   }
 
+  // Converts the class instance to plain data for React, tests, or chart history.
   toJSON() {
     return {
       id: this.id,
