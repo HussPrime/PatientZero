@@ -1,3 +1,5 @@
+// Purpose: Contains small inline SVG icons used by dashboard controls and labels.
+// Renders the shared SVG wrapper used by every icon component.
 function Icon({ children, size = 16, fill = "none" }) {
   return (
     <svg
@@ -16,6 +18,7 @@ function Icon({ children, size = 16, fill = "none" }) {
   );
 }
 
+// Renders an activity line icon for the evolution chart.
 export function IconActivity(props) {
   return (
     <Icon {...props}>
@@ -24,6 +27,7 @@ export function IconActivity(props) {
   );
 }
 
+// Renders a bolt icon for simulation controls.
 export function IconBolt(props) {
   return (
     <Icon {...props}>
@@ -32,6 +36,7 @@ export function IconBolt(props) {
   );
 }
 
+// Renders a chip icon for the canvas panel.
 export function IconChip(props) {
   return (
     <Icon {...props}>
@@ -41,6 +46,7 @@ export function IconChip(props) {
   );
 }
 
+// Renders a clock icon for future time-related UI.
 export function IconClock(props) {
   return (
     <Icon {...props}>
@@ -50,6 +56,7 @@ export function IconClock(props) {
   );
 }
 
+// Renders a filled dot used for state color indicators.
 export function IconDot(props) {
   return (
     <Icon fill="currentColor" {...props}>
@@ -58,6 +65,7 @@ export function IconDot(props) {
   );
 }
 
+// Renders a play icon for the start action.
 export function IconPlay(props) {
   return (
     <Icon fill="currentColor" {...props}>
@@ -66,6 +74,7 @@ export function IconPlay(props) {
   );
 }
 
+// Renders a reset icon for clearing the session.
 export function IconReset(props) {
   return (
     <Icon {...props}>
@@ -75,6 +84,7 @@ export function IconReset(props) {
   );
 }
 
+// Renders a settings icon for parameter panels.
 export function IconSettings(props) {
   return (
     <Icon {...props}>
@@ -84,6 +94,7 @@ export function IconSettings(props) {
   );
 }
 
+// Renders a shield icon for recovered or protected states.
 export function IconShield(props) {
   return (
     <Icon {...props}>
@@ -92,6 +103,7 @@ export function IconShield(props) {
   );
 }
 
+// Renders a stop icon for ending the simulation.
 export function IconStop(props) {
   return (
     <Icon fill="currentColor" {...props}>
@@ -100,6 +112,7 @@ export function IconStop(props) {
   );
 }
 
+// Renders a users icon for total population.
 export function IconUsers(props) {
   return (
     <Icon {...props}>

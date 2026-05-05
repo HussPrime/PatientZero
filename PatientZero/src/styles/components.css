@@ -1,3 +1,4 @@
+/* Purpose: Styles reusable dashboard components such as panels, controls, charts, and simulation states. */
 .header-status,
 .tick-counter {
   display: flex;
@@ -281,6 +282,7 @@
   font-size: 12px;
 }
 
+/* TODO: Replace these temporary DOM dots with p5.js drawing styles once SimulationCanvas owns the real canvas. */
 .simulation-dot {
   position: absolute;
   width: 8px;
@@ -363,6 +365,7 @@
   background: #172033;
 }
 
+/* TODO: Tune chart spacing once real historical data is displayed. */
 .chart-frame canvas {
   width: 100% !important;
   height: 100% !important;

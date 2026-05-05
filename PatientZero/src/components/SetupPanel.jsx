@@ -1,7 +1,10 @@
+// Purpose: Provides the initial configuration form before a simulation is started.
 import { IconPlay, IconSettings, IconShield } from "./Icons";
 import { RangeField } from "./RangeField";
 
+// Renders editable setup fields and the start/reset actions.
 export function SetupPanel({ values, onChange, onReset, onStart }) {
+  // TODO: Display validation messages here when impossible parameter combinations are rejected.
   return (
     <section className="panel setup-panel">
       <div className="panel__header">

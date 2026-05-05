@@ -1,3 +1,4 @@
+// Purpose: Unit tests for the individual state transitions.
 import { describe, expect, it } from "vitest";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
 import { Individual } from "./Individual";

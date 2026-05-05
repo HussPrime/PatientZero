@@ -1,3 +1,4 @@
+// Purpose: Displays the live counts for each simulation state.
 import { IconDot, IconShield, IconUsers } from "./Icons";
 
 const STAT_CARDS = [
@@ -7,6 +8,7 @@ const STAT_CARDS = [
   { key: "recovered", label: "Guéris", color: "recovered", icon: IconShield },
 ];
 
+// Renders statistic cards from the latest population counters.
 export function StatsPanel({ stats }) {
   return (
     <div className="stats-grid" aria-label="Statistiques de simulation">
@@ -14,6 +16,7 @@ export function StatsPanel({ stats }) {
         const value = stats[card.key];
         const percent = card.key === "total" ? 100 : (value / stats.total) * 100;
 
+        // TODO: Guard against total = 0 if user validation later allows an empty population.
         return (
           <article className={`stat-card stat-card--${card.color}`} key={card.key}>
             <div className="stat-card__label">

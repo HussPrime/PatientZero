@@ -1,8 +1,11 @@
+// Purpose: Displays the app identity, current run status, and simulation tick.
+// Renders the top header with status-dependent visual feedback.
 export function Header({ status, tick }) {
   const isRunning = status === "Simulation en cours";
   const isPaused = status === "Pause";
   const logoPath = `${import.meta.env.BASE_URL}Logo-Patient-Zero.png`;
 
+  // TODO: Replace the raw tick with formatted simulation time if the model later uses real seconds.
   return (
     <header className="app-header">
       <div className="brand">

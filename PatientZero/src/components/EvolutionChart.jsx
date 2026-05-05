@@ -1,23 +1,28 @@
+// Purpose: Displays the simulation history with Chart.js.
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import { IconActivity } from "./Icons";
 import { Legend } from "./Legend";
 
+// Renders and updates the line chart for healthy, infected, and recovered counts.
 export function EvolutionChart({ data }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
   useEffect(() => {
+    // Creates the chart only when the canvas node is available.
     if (!canvasRef.current) {
       return undefined;
     }
 
+    // Chart.js owns its canvas drawing, so the old instance must be destroyed before rebuilding.
     chartRef.current?.destroy();
     chartRef.current = new Chart(canvasRef.current, {
       type: "line",
       data: {
         labels: data.map((item) => item.tick),
         datasets: [
+          // TODO: Keep this dataset list aligned with INDIVIDUAL_STATES if new states are added.
           {
             label: "Sains",
             data: data.map((item) => item.healthy),
@@ -65,6 +70,7 @@ export function EvolutionChart({ data }) {
     });
 
     return () => {
+      // Cleans up the Chart.js instance when React unmounts or data changes.
       chartRef.current?.destroy();
     };
   }, [data]);

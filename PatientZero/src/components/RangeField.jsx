@@ -1,6 +1,9 @@
+// Purpose: Reusable range input with a visible value and filled track.
+// Renders a labeled slider and converts browser string values back to numbers.
 export function RangeField({ label, value, min, max, step = 1, suffix = "", hint, onChange }) {
   const percent = ((value - min) / (max - min)) * 100;
 
+  // TODO: Clamp percent between 0 and 100 if live validation allows temporary out-of-range values.
   return (
     <label className="range-field">
       <span className="range-field__topline">

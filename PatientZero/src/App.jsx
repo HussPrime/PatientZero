@@ -1,3 +1,4 @@
+// Purpose: Root React component that wires the dashboard, settings, controls, and future simulation state together.
 import { useMemo, useState } from "react";
 import { ControlsPanel } from "./components/ControlsPanel";
 import { DashboardLayout } from "./components/DashboardLayout";
@@ -21,6 +22,7 @@ const INITIAL_PARAMETERS = {
   simulationSpeed: 1,
 };
 
+// Renders the full application shell and owns the main simulation parameters.
 function App() {
   const [status, setStatus] = useState("Prêt");
   const [tick, setTick] = useState(0);
@@ -36,22 +38,28 @@ function App() {
     [parameters.initialInfected, parameters.populationSize],
   );
 
+  // Updates one simulation parameter while preserving the others.
   const updateParameter = (name, value) => {
     setParameters((current) => ({ ...current, [name]: value }));
   };
 
+  // Restores default values and clears the temporary simulation state.
   const resetParameters = () => {
     setParameters(INITIAL_PARAMETERS);
     setStatus("Prêt");
     setTick(0);
   };
 
+  // Starts the first version of the simulation flow.
   const startSimulation = () => {
+    // TODO: Generate the Population instance here before the p5.js canvas receives real individuals.
     setStatus("Simulation en cours");
     setTick(1);
   };
 
+  // Stops the simulation without changing the configured parameters.
   const stopSimulation = () => {
+    // TODO: Stop the logical update loop once propagation ticks are implemented.
     setStatus("Prêt");
   };
 
@@ -60,11 +68,17 @@ function App() {
       header={<Header status={status} tick={tick} />}
       stats={<StatsPanel stats={stats} />}
       simulation={
+        // TODO: Pass generated individuals here when Population.generate() is connected.
         <SimulationCanvas
           infectionRadius={parameters.infectionRadius}
         />
       }
-      chart={<EvolutionChart data={[]} />}
+      chart={
+        // TODO: Replace this empty array with historical stats collected after each simulation tick.
+        <EvolutionChart
+          data={[]}
+        />
+      }
       controls={
         <ControlsPanel
           status={status}

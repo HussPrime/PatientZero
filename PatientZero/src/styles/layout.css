@@ -1,3 +1,4 @@
+/* Purpose: Defines the high-level dashboard, header, and responsive page layout. */
 .app-shell {
   min-height: 100vh;
   background: #0f172a;
@@ -79,6 +80,7 @@
   gap: 16px;
 }
 
+/* TODO: Revisit these breakpoints after the p5.js canvas has fixed responsive sizing. */
 @media (max-width: 1240px) {
   body {
     min-width: 0;

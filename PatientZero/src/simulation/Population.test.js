@@ -1,3 +1,4 @@
+// Purpose: Unit tests for population generation, validation, and initial statistics.
 import { describe, expect, it } from "vitest";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
 import { Population } from "./Population";
@@ -5,6 +6,7 @@ import { Population } from "./Population";
 const createStableRng = () => {
   let value = 0.1;
 
+  // Returns a predictable sequence so generated populations are testable.
   return () => {
     value = (value + 0.23) % 1;
     return value;

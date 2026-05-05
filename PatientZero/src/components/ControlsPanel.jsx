@@ -1,10 +1,13 @@
+// Purpose: Provides the controls used to pause, stop, reset, and tune simulation speed.
 import { IconBolt, IconReset, IconStop } from "./Icons";
 
 const SPEED_OPTIONS = [1, 2, 3, 4, 5];
 
+// Renders command buttons and speed selection for the current session.
 export function ControlsPanel({ status, speed, onSpeedChange, onPause, onStop, onReset }) {
   const speedIndex = Math.max(0, SPEED_OPTIONS.indexOf(speed));
 
+  // TODO: Add a resume action when the status machine distinguishes pause from stop.
   return (
     <section className="panel controls-panel">
       <div className="panel__header">

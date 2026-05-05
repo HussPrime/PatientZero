@@ -1,9 +1,11 @@
+// Purpose: Shows the visual mapping between health states and their colors.
 const LEGEND_ITEMS = [
   { label: "Sain", state: "healthy" },
   { label: "Infecté", state: "infected" },
   { label: "Guéri", state: "recovered" },
 ];
 
+// Renders the state legend in normal or compact mode.
 export function Legend({ compact = false }) {
   return (
     <div className={compact ? "legend legend--compact" : "legend"}>

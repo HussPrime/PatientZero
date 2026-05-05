@@ -1,3 +1,5 @@
+// Purpose: Defines the main dashboard regions without owning simulation logic.
+// Renders the page layout from slots provided by App.
 export function DashboardLayout({ header, stats, simulation, chart, controls, liveSettings, setup }) {
   return (
     <div className="app-shell">
