@@ -1,5 +1,5 @@
 // Purpose: Provides the controls used to pause, stop, reset, and tune simulation speed.
-import { IconBolt, IconPlay, IconReset, IconStop } from "./Icons";
+import { IconBolt, IconPause, IconPlay, IconReset, IconStop } from "./Icons";
 
 const SPEED_OPTIONS = [1, 2, 3, 4, 5];
 
@@ -31,7 +31,7 @@ export function ControlsPanel({ status, speed, onSpeedChange, onToggleRun, onSto
 
       <div className="control-actions">
         <button className={mainActionClass} onClick={onToggleRun} type="button">
-          {isRunning ? null : <IconPlay size={12} />}
+          {isRunning ? <IconPause size={12} /> : <IconPlay size={12} />}
           {mainActionLabel}
         </button>
         <button className="button button--ghost button--stop" onClick={onStop} type="button">

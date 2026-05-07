@@ -4,6 +4,7 @@ import P5 from "p5";
 import { IconChip } from "./Icons";
 import { Legend } from "./Legend";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
+import { updateSimulation } from "../simulation/updateSimulation";
 
 const CANVAS_WIDTH = 900;
 const CANVAS_HEIGHT = 520;
@@ -47,15 +48,34 @@ const drawIndividual = (p, individual, infectionRadius) => {
   p.circle(x, y, radius * 2);
 };
 
-// Renders the simulation panel until the p5.js instance is connected.
-export function SimulationCanvas({ individuals = [], infectionRadius = 18, onToggleRun }) {
+// Renders the p5.js simulation panel and applies the current run speed.
+export function SimulationCanvas({
+  individuals = [],
+  infectionRadius = 18,
+  isRunning = false,
+  parameters,
+  simulationSpeed = 1,
+  onSimulationFrame,
+  onToggleRun,
+}) {
   const containerRef = useRef(null);
-  const dataRef = useRef({ individuals, infectionRadius });
+  const dataRef = useRef({
+    individuals,
+    infectionRadius,
+    isRunning,
+    onSimulationFrame,
+    parameters,
+    simulationSpeed,
+  });
 
   useEffect(() => {
     dataRef.current.individuals = individuals;
     dataRef.current.infectionRadius = infectionRadius;
-  }, [individuals, infectionRadius]);
+    dataRef.current.isRunning = isRunning;
+    dataRef.current.onSimulationFrame = onSimulationFrame;
+    dataRef.current.parameters = parameters;
+    dataRef.current.simulationSpeed = simulationSpeed;
+  }, [individuals, infectionRadius, isRunning, onSimulationFrame, parameters, simulationSpeed]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -81,12 +101,28 @@ export function SimulationCanvas({ individuals = [], infectionRadius = 18, onTog
 
       p.draw = () => {
         p.clear();
-        const { individuals: currentIndividuals, infectionRadius: currentRadius } = dataRef.current;
+        const {
+          individuals: currentIndividuals,
+          infectionRadius: currentRadius,
+          isRunning: currentIsRunning,
+          onSimulationFrame: currentOnSimulationFrame,
+          parameters: currentParameters,
+          simulationSpeed: currentSpeed,
+        } = dataRef.current;
 
         if (currentIndividuals.length === 0) {
           p.noStroke();
           p.fill("#7b8699");
           return;
+        }
+
+        if (currentIsRunning) {
+          currentIndividuals.forEach((individual) => {
+            individual.move(CANVAS_WIDTH, CANVAS_HEIGHT, currentSpeed, INDIVIDUAL_RADIUS);
+          });
+
+          updateSimulation(currentIndividuals, currentParameters);
+          currentOnSimulationFrame?.();
         }
 
         currentIndividuals.forEach((individual) => {

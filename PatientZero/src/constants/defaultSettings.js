@@ -6,6 +6,9 @@ export const DEFAULT_SETTINGS = {
   simulationHeight: 520,
   minInitialSpeed: -1,
   maxInitialSpeed: 1,
-  // TODO: Add infectionDuration, transmissionRate, recoveryRate, and infectionRadius here when the pure model is connected.
+  infectionDuration: 4,
+  transmissionRate: 28,
+  recoveryRate: 12,
+  infectionRadius: 18,
 };
 

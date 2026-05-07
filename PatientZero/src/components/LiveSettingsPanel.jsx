@@ -21,7 +21,7 @@ export function LiveSettingsPanel({ values, onChange }) {
 
       <div className="settings-stack">
         <RangeField
-          label="Probabilité de transmission"
+          label="Facteur de transmission"
           max={100}
           min={0}
           onChange={(value) => onChange("transmissionRate", value)}

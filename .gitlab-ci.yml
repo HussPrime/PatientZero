@@ -1,8 +1,21 @@
 stages:
+  - test
   - sync
+
+test_patient_zero:
+  stage: test
+  image: node:22
+  only:
+    - main
+  script:
+    - cd PatientZero
+    - npm ci
+    - npm run test:run
 
 sync_to_github:
   stage: sync
+  needs:
+    - test_patient_zero
   variables:
     GIT_DEPTH: 0
   only:

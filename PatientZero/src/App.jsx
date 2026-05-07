@@ -14,11 +14,11 @@ import { Population } from "./simulation/Population";
 const INITIAL_PARAMETERS = {
   populationSize: DEFAULT_SETTINGS.populationSize,
   initialInfected: DEFAULT_SETTINGS.initialInfected,
-  infectionDuration: 120,
+  infectionDuration: DEFAULT_SETTINGS.infectionDuration,
   initialSpeed: 2,
-  transmissionRate: 28,
-  recoveryRate: 12,
-  infectionRadius: 18,
+  transmissionRate: DEFAULT_SETTINGS.transmissionRate,
+  recoveryRate: DEFAULT_SETTINGS.recoveryRate,
+  infectionRadius: DEFAULT_SETTINGS.infectionRadius,
   randomMovement: true,
   simulationSpeed: 1,
 };
@@ -77,6 +77,8 @@ function App() {
     [population],
   );
   const isSetupDisabled = status !== "Prêt";
+  const isSimulationRunning = status === "Simulation en cours";
+  const isSimulationStarted = status === "Simulation en cours" || status === "Pause";
 
   // Updates one simulation parameter while preserving the others.
   const updateParameter = (name, value) => {
@@ -103,10 +105,21 @@ function App() {
     setTick(0);
   };
 
+  // Refreshes React state after p5.js has applied one simulation frame.
+  const handleSimulationFrame = () => {
+    setPopulation((currentPopulation) => {
+      const nextPopulation = new Population(currentPopulation.settings);
+
+      nextPopulation.individuals = currentPopulation.getIndividuals().slice();
+      return nextPopulation;
+    });
+    setTick((currentTick) => currentTick + 1);
+  };
+
   // Starts the first version of the simulation flow.
   const startSimulation = () => {
     setStatus("Simulation en cours");
-    setTick(1);
+    setTick((currentTick) => (currentTick === 0 ? 1 : currentTick));
     scrollToSimulationPanel();
   };
 
@@ -122,7 +135,6 @@ function App() {
 
   // Stops the simulation without changing the configured parameters.
   const stopSimulation = () => {
-    // TODO: Stop the logical update loop once propagation ticks are implemented.
     setStatus("Prêt");
   };
 
@@ -134,6 +146,10 @@ function App() {
         <SimulationCanvas
           individuals={population?.getIndividuals() ?? []}
           infectionRadius={parameters.infectionRadius}
+          isRunning={isSimulationRunning}
+          parameters={parameters}
+          simulationSpeed={parameters.simulationSpeed}
+          onSimulationFrame={handleSimulationFrame}
           onToggleRun={toggleSimulation}
         />
       }
@@ -162,9 +178,11 @@ function App() {
       setup={
         <SetupPanel
           disabled={isSetupDisabled}
+          isSimulationStarted={isSimulationStarted}
           values={parameters}
           onChange={updateParameter}
           onReset={resetParameters}
+          onStop={stopSimulation}
           onStart={startSimulation}
         />
       }
