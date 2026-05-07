@@ -4,6 +4,7 @@ import P5 from "p5";
 import { IconChip } from "./Icons";
 import { Legend } from "./Legend";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
+import { updateSimulation } from "../simulation/updateSimulation";
 
 const CANVAS_WIDTH = 900;
 const CANVAS_HEIGHT = 520;
@@ -52,18 +53,29 @@ export function SimulationCanvas({
   individuals = [],
   infectionRadius = 18,
   isRunning = false,
+  parameters,
   simulationSpeed = 1,
+  onSimulationFrame,
   onToggleRun,
 }) {
   const containerRef = useRef(null);
-  const dataRef = useRef({ individuals, infectionRadius, isRunning, simulationSpeed });
+  const dataRef = useRef({
+    individuals,
+    infectionRadius,
+    isRunning,
+    onSimulationFrame,
+    parameters,
+    simulationSpeed,
+  });
 
   useEffect(() => {
     dataRef.current.individuals = individuals;
     dataRef.current.infectionRadius = infectionRadius;
     dataRef.current.isRunning = isRunning;
+    dataRef.current.onSimulationFrame = onSimulationFrame;
+    dataRef.current.parameters = parameters;
     dataRef.current.simulationSpeed = simulationSpeed;
-  }, [individuals, infectionRadius, isRunning, simulationSpeed]);
+  }, [individuals, infectionRadius, isRunning, onSimulationFrame, parameters, simulationSpeed]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -93,6 +105,8 @@ export function SimulationCanvas({
           individuals: currentIndividuals,
           infectionRadius: currentRadius,
           isRunning: currentIsRunning,
+          onSimulationFrame: currentOnSimulationFrame,
+          parameters: currentParameters,
           simulationSpeed: currentSpeed,
         } = dataRef.current;
 
@@ -102,11 +116,16 @@ export function SimulationCanvas({
           return;
         }
 
-        currentIndividuals.forEach((individual) => {
-          if (currentIsRunning) {
+        if (currentIsRunning) {
+          currentIndividuals.forEach((individual) => {
             individual.move(CANVAS_WIDTH, CANVAS_HEIGHT, currentSpeed, INDIVIDUAL_RADIUS);
-          }
+          });
 
+          updateSimulation(currentIndividuals, currentParameters);
+          currentOnSimulationFrame?.();
+        }
+
+        currentIndividuals.forEach((individual) => {
           drawIndividual(p, individual, currentRadius);
         });
       };

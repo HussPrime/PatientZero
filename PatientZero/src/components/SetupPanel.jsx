@@ -68,12 +68,11 @@ export function SetupPanel({
           />
           <RangeField
             label="Durée moyenne de l'infection"
-            max={400}
-            min={20}
+            max={30}
+            min={1}
             disabled={disabled}
             onChange={(value) => onChange("infectionDuration", value)}
-            step={10}
-            suffix=" pas"
+            suffix=" s"
             value={values.infectionDuration}
           />
           <RangeField
@@ -90,7 +89,7 @@ export function SetupPanel({
         <div className="setup-column">
           <h3>Épidémiologie</h3>
           <RangeField
-            label="Probabilité de transmission"
+            label="Facteur de transmission"
             max={100}
             min={0}
             disabled={disabled}
