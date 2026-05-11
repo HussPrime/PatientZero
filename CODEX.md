@@ -143,7 +143,6 @@ export const DEFAULT_SETTINGS = {
   initialInfected: 5,
   infectionRate: 0.25,
   infectionDuration: 8,
-  recoveryRate: 0.1,
   simulationSpeed: 1,
   infectionRadius: 20
 };

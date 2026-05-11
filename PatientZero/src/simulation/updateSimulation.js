@@ -12,7 +12,6 @@ const DEFAULT_UPDATE_SETTINGS = {
   infectionDuration: 4,
   infectionRadius: 18,
   referenceContactDuration: 1,
-  recoveryRate: 0,
   simulationSpeed: 1,
   transmissionRate: 0,
 };

@@ -167,10 +167,6 @@ function ConfigPanel({ params, setParams, onStart, onReset, onClose, disabled = 
                   min={1} max={20} step={1} onChange={set('initialInfected')}
                   suffix="" hint="Infectés au lancement" disabled={disabled} />
 
-          <Slider label="Taux de guérison" value={params.recovery}
-                  min={0} max={100} step={1} onChange={set('recovery')}
-                  suffix=" %" hint="Probabilité de guérison après infection" disabled={disabled} />
-
           <Slider label="Durée moyenne de l'infection" value={params.duration}
                   min={20} max={400} step={10} onChange={set('duration')}
                   suffix=" pas" hint="Pas de simulation avant issue" disabled={disabled} />
@@ -444,7 +440,6 @@ const DEFAULTS = {
   population: 320,
   initialInfected: 3,
   transmission: 35,
-  recovery: 75,
   duration: 160,
   radius: 18,
   speed: 2,
@@ -556,11 +551,7 @@ function App() {
           // recovery
           for (const a of next) {
             if (a.state === 1 && a.timer >= params.duration) {
-              if (Math.random() < params.recovery / 100) {
-                a.state = 2;
-              } else {
-                a.timer = params.duration / 2; // reset, still infected
-              }
+              a.state = 2;
             }
           }
           return next;
@@ -838,9 +829,6 @@ function App() {
               <Slider label="Probabilité de transmission" value={params.transmission}
                       min={0} max={100} onChange={(v) => setParams({ ...params, transmission: v })}
                       suffix=" %" />
-              <Slider label="Taux de guérison" value={params.recovery}
-                      min={0} max={100} onChange={(v) => setParams({ ...params, recovery: v })}
-                      suffix=" %" />
               <Slider label="Rayon d'infection" value={params.radius}
                       min={4} max={40} onChange={(v) => setParams({ ...params, radius: v })}
                       suffix=" px" />
@@ -851,7 +839,7 @@ function App() {
           <Panel title="Session" icon={<IconWave size={13} />}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <Row k="Modèle" v="SIR (susceptible–infected–recovered)" />
-              <Row k="R₀ estimé" v={(params.transmission / Math.max(1, 100 - params.recovery) * 1.4).toFixed(2)} mono />
+              <Row k="R₀ estimé" v={(params.transmission / 100 * 1.4).toFixed(2)} mono />
               <Row k="Durée écoulée" v={`${tick} pas`} mono />
             </div>
           </Panel>

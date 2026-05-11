@@ -29,12 +29,12 @@ export function LiveSettingsPanel({ values, onChange }) {
           value={values.transmissionRate}
         />
         <RangeField
-          label="Taux de guérison"
-          max={100}
-          min={0}
-          onChange={(value) => onChange("recoveryRate", value)}
-          suffix=" %"
-          value={values.recoveryRate}
+          label="Durée moyenne de l'infection"
+          max={30}
+          min={1}
+          onChange={(value) => onChange("infectionDuration", value)}
+          suffix=" s"
+          value={values.infectionDuration}
         />
         <RangeField
           label="Rayon d'infection"
@@ -43,6 +43,14 @@ export function LiveSettingsPanel({ values, onChange }) {
           onChange={(value) => onChange("infectionRadius", value)}
           suffix=" px"
           value={values.infectionRadius}
+        />
+        <RangeField
+          label="Vitesse de déplacement"
+          max={5}
+          min={1}
+          onChange={(value) => onChange("movementSpeed", value)}
+          suffix="x"
+          value={values.movementSpeed}
         />
       </div>
     </section>

@@ -2,18 +2,42 @@
 import { IconBolt, IconPause, IconPlay, IconReset, IconStop } from "./Icons";
 
 const SPEED_OPTIONS = [1, 2, 3, 4, 5];
+const FINISHED_STATUS = "Simulation terminée";
+const STOPPED_STATUS = "Simulation arrêtée";
 
 // Renders command buttons and speed selection for the current session.
-export function ControlsPanel({ status, speed, onSpeedChange, onToggleRun, onStop, onReset }) {
+export function ControlsPanel({
+  status,
+  speed,
+  stats,
+  timeSeconds,
+  onSpeedChange,
+  onToggleRun,
+  onStop,
+  onReset,
+  isStopDisabled = false,
+}) {
   const speedIndex = Math.max(0, SPEED_OPTIONS.indexOf(speed));
   const isRunning = status === "Simulation en cours";
   const isPaused = status === "Pause";
-  const mainActionLabel = isRunning ? "Pause" : isPaused ? "Reprendre" : "Démarrer";
+  const isFinished = status === FINISHED_STATUS;
+  const isStopped = status === STOPPED_STATUS;
+  const mainActionLabel = isRunning
+    ? "Pause"
+    : isPaused
+      ? "Reprendre"
+      : isFinished || isStopped
+        ? isStopped ? "Arrêté" : "Terminé"
+        : "Démarrer";
   const mainActionClass = isRunning
     ? "button button--warning"
     : isPaused
       ? "button button--primary"
-      : "button button--success";
+      : isFinished || isStopped
+        ? "button button--success"
+        : "button button--success";
+  const recoveredPercent = stats?.total > 0 ? Math.round((stats.recovered / stats.total) * 100) : 0;
+  const finishedTime = Math.floor(timeSeconds);
 
   return (
     <section className="panel controls-panel">
@@ -30,11 +54,11 @@ export function ControlsPanel({ status, speed, onSpeedChange, onToggleRun, onSto
       </div>
 
       <div className="control-actions">
-        <button className={mainActionClass} onClick={onToggleRun} type="button">
+        <button className={mainActionClass} disabled={isFinished || isStopped} onClick={onToggleRun} type="button">
           {isRunning ? <IconPause size={12} /> : <IconPlay size={12} />}
           {mainActionLabel}
         </button>
-        <button className="button button--ghost button--stop" onClick={onStop} type="button">
+        <button className="button button--ghost button--stop" disabled={isStopDisabled} onClick={onStop} type="button">
           <IconStop size={12} /> Stop
         </button>
         <button className="button button--ghost button--wide" onClick={onReset} type="button">
@@ -61,7 +85,15 @@ export function ControlsPanel({ status, speed, onSpeedChange, onToggleRun, onSto
       <div className="session-summary">
         <span>Session</span>
         <strong>{status}</strong>
-        <small>Modèle SIR, sans propagation active pour cette étape.</small>
+        {isFinished || isStopped ? (
+          <small>
+            {isStopped ? "Simulation arrêtée" : "Épidémie terminée"} après {finishedTime}s.
+            {stats.recovered} guéris, {stats.healthy} sains, {stats.infected} infectés,
+            soit {recoveredPercent} % de la population passée par l'infection.
+          </small>
+        ) : (
+          <small>Modèle SIR, propagation locale selon la distance et les paramètres actifs.</small>
+        )}
       </div>
     </section>
   );

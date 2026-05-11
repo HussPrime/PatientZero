@@ -38,7 +38,6 @@ Dans le code, cette logique est implémentée par la fonction pure `calculateInf
 - `infectionDuration` : durée d'infection avant guérison, sans lien avec la durée de contact.
 - `movementSpeed` : vitesse de déplacement des individus. Elle influence indirectement les contacts, mais elle n'entre pas directement dans la formule.
 - `transmissionRate` : facteur de transmission affiché dans l'interface.
-- `recoveryRate` : conservé dans l'interface, mais la guérison actuelle dépend surtout de `infectionDuration`.
 - `infectionRadius` : rayon maximal et distance de référence de contamination.
 
 ## Variables internes ajoutées
@@ -105,7 +104,6 @@ Le modèle reste volontairement simple :
 - la durée réelle de contact entre deux individus n'est pas mémorisée;
 - le calcul compare encore chaque infecté avec les individus sains, ce qui peut devenir coûteux avec une très grande population;
 - `movementSpeed` influence les contacts seulement par le mouvement, pas directement dans la formule;
-- `recoveryRate` n'est pas intégré à la contamination.
 
 ## Améliorations possibles
 
@@ -113,7 +111,6 @@ Plus tard, il serait possible d'ajouter :
 
 - une mémoire de contact par paire d'individus;
 - une grille spatiale pour accélérer la recherche des voisins;
-- un modèle de guérison combinant `infectionDuration` et `recoveryRate`;
 - un historique plus précis pour alimenter le graphique Chart.js;
 - des paramètres avancés masqués dans une section optionnelle.
 

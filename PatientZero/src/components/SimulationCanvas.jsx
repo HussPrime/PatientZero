@@ -51,12 +51,17 @@ const drawIndividual = (p, individual, infectionRadius) => {
 
 // Renders the p5.js simulation panel and applies the current run speed.
 export function SimulationCanvas({
+  endReason = "completed",
   individuals = [],
   infectionRadius = 18,
+  isFinished = false,
   isRunning = false,
   parameters,
   simulationSpeed = 1,
+  stats,
+  timeSeconds = 0,
   onSimulationFrame,
+  onReplay,
   onToggleRun,
 }) {
   const containerRef = useRef(null);
@@ -162,12 +167,23 @@ export function SimulationCanvas({
   }, []);
 
   // Toggles play/pause when the user activates the simulation area.
-  const handleCanvasKeyDown = (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
+  const handleCanvasClick = () => {
+    if (!isFinished) {
       onToggleRun();
     }
   };
+
+  // Toggles play/pause from the keyboard while the simulation is not ended.
+  const handleCanvasKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleCanvasClick();
+    }
+  };
+
+  const recoveredPercent = stats?.total > 0 ? Math.round((stats.recovered / stats.total) * 100) : 0;
+  const finalTime = Math.floor(timeSeconds);
+  const isStopped = endReason === "stopped";
 
   return (
     <section className="panel simulation-panel">
@@ -188,13 +204,36 @@ export function SimulationCanvas({
         ref={containerRef}
         className="simulation-canvas"
         aria-label="Zone de simulation, cliquer pour démarrer ou mettre en pause"
-        onClick={onToggleRun}
+        onClick={handleCanvasClick}
         onKeyDown={handleCanvasKeyDown}
         role="button"
         tabIndex={0}
       >
         {individuals.length === 0 ? <div className="simulation-empty-state">Population non générée</div> : null}
         <Legend />
+        {isFinished ? (
+          <div className="simulation-result is-complete">
+            <span>{isStopped ? "Simulation arrêtée" : "Simulation terminée"}</span>
+            <strong>{isStopped ? "Simulation stoppée manuellement" : "Plus aucun individu infecté"}</strong>
+            <small>
+              {stats.recovered} guéris, {stats.healthy} sains, {stats.infected} infectés après {finalTime}s.
+              {` ${recoveredPercent} % de la population a été infectée.`}
+            </small>
+            <div className="simulation-result__bar">
+              <span />
+            </div>
+            <button
+                className="button button--primary"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onReplay();
+                }}
+                type="button"
+              >
+              Rejouer une simulation
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );

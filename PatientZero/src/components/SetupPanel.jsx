@@ -67,15 +67,6 @@ export function SetupPanel({
             value={values.initialInfected}
           />
           <RangeField
-            label="Durée moyenne de l'infection"
-            max={30}
-            min={1}
-            disabled={disabled}
-            onChange={(value) => onChange("infectionDuration", value)}
-            suffix=" s"
-            value={values.infectionDuration}
-          />
-          <RangeField
             label="Vitesse de déplacement"
             max={5}
             min={1}
@@ -98,13 +89,13 @@ export function SetupPanel({
             value={values.transmissionRate}
           />
           <RangeField
-            label="Taux de guérison"
-            max={100}
-            min={0}
+            label="Durée moyenne de l'infection"
+            max={30}
+            min={1}
             disabled={disabled}
-            onChange={(value) => onChange("recoveryRate", value)}
-            suffix=" %"
-            value={values.recoveryRate}
+            onChange={(value) => onChange("infectionDuration", value)}
+            suffix=" s"
+            value={values.infectionDuration}
           />
           <RangeField
             label="Rayon d'infection"
@@ -115,18 +106,6 @@ export function SetupPanel({
             suffix=" px"
             value={values.infectionRadius}
           />
-          <label className="toggle-row">
-            <span>
-              <strong>Déplacement aléatoire</strong>
-              <small>Mouvement visuel prévu pour p5.js</small>
-            </span>
-            <input
-              checked={values.randomMovement}
-              disabled={disabled}
-              onChange={(event) => onChange("randomMovement", event.target.checked)}
-              type="checkbox"
-            />
-          </label>
         </div>
       </div>
 

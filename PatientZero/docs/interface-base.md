@@ -66,7 +66,7 @@ Le layout est pensé pour desktop, comme la maquette. Il reste tout de même rai
 
 `ControlsPanel` contient Pause, Stop, Réinitialiser et le choix de vitesse x1 à x5. Les boutons changent seulement l'état visuel de base.
 
-`LiveSettingsPanel` contient les sliders de probabilité de transmission, taux de guérison et rayon d'infection.
+`LiveSettingsPanel` contient les sliders de probabilité de transmission et de rayon d'infection.
 
 `SetupPanel` contient la configuration de population et d'épidémiologie, ainsi que les boutons de réinitialisation des paramètres et de démarrage.
 
