@@ -1,7 +1,7 @@
 // Purpose: Placeholder for the p5.js canvas that will render the moving population.
 import { useEffect, useRef } from "react";
 import P5 from "p5";
-import { IconChip } from "./Icons";
+import { IconChip, IconReset } from "./Icons";
 import { Legend } from "./Legend";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
 import { getSimulationTimeStepSeconds, updateSimulation } from "../simulation/updateSimulation";
@@ -181,7 +181,8 @@ export function SimulationCanvas({
     }
   };
 
-  const recoveredPercent = stats?.total > 0 ? Math.round((stats.recovered / stats.total) * 100) : 0;
+  const affectedCount = (stats?.recovered ?? 0) + (stats?.infected ?? 0);
+  const affectedPercent = stats?.total > 0 ? Math.round((affectedCount / stats.total) * 100) : 0;
   const finalTime = Math.floor(timeSeconds);
   const isStopped = endReason === "stopped";
 
@@ -212,14 +213,35 @@ export function SimulationCanvas({
         {individuals.length === 0 ? <div className="simulation-empty-state">Population non générée</div> : null}
         <Legend />
         {isFinished ? (
-          <div className="simulation-result is-complete">
-            <span>{isStopped ? "Simulation arrêtée" : "Simulation terminée"}</span>
+          <div className={`simulation-result ${isStopped ? "is-stopped" : "is-complete"}`}>
+            <span className="simulation-result__eyebrow">{isStopped ? "Simulation arrêtée" : "Simulation terminée"}</span>
             <strong>{isStopped ? "Simulation stoppée manuellement" : "Plus aucun individu infecté"}</strong>
-            <small>
-              {stats.recovered} guéris, {stats.healthy} sains, {stats.infected} infectés après {finalTime}s.
-              {` ${recoveredPercent} % de la population a été infectée.`}
-            </small>
-            <div className="simulation-result__bar">
+            <p>
+              {affectedPercent} % de la population a été touchée après {finalTime}s.
+            </p>
+            <div className="simulation-result__metrics" aria-label="Résumé de fin de simulation">
+              <span>
+                <strong>{affectedCount}</strong>
+                Touchés
+              </span>
+              <span>
+                <strong>{stats.recovered}</strong>
+                Guéris
+              </span>
+              <span>
+                <strong>{stats.infected}</strong>
+                Infectés
+              </span>
+              <span>
+                <strong>{stats.healthy}</strong>
+                Sains
+              </span>
+            </div>
+            <div
+              className="simulation-result__bar"
+              aria-label={`${affectedPercent} % de la population a été touchée`}
+              style={{ "--affected-percent": `${affectedPercent}%` }}
+            >
               <span />
             </div>
             <button
@@ -230,6 +252,7 @@ export function SimulationCanvas({
                 }}
                 type="button"
               >
+              <IconReset size={13} />
               Rejouer une simulation
             </button>
           </div>

@@ -402,39 +402,74 @@
   top: 50%;
   z-index: 2;
   display: grid;
-  width: min(360px, calc(100% - 32px));
-  gap: 9px;
+  width: min(430px, calc(100% - 32px));
+  gap: 12px;
   padding: 18px;
-  border: 1px solid rgba(67, 160, 71, 0.32);
+  border: 1px solid rgba(30, 136, 229, 0.34);
   border-radius: 8px;
   transform: translate(-50%, -50%);
   animation: simulation-result-in 360ms ease both;
-  background: rgba(15, 23, 42, 0.86);
+  background: rgba(15, 23, 42, 0.9);
   box-shadow: 0 18px 44px rgba(2, 6, 23, 0.34);
   backdrop-filter: blur(10px);
   color: #f5f5f5;
   text-align: center;
 }
 
-.simulation-result span {
-  color: #43a047;
+.simulation-result.is-stopped {
+  border-color: rgba(253, 216, 53, 0.36);
+}
+
+.simulation-result__eyebrow {
+  color: #8cc8ff;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.simulation-result.is-stopped .simulation-result__eyebrow {
+  color: #fdd835;
 }
 
 .simulation-result strong {
   font-size: 18px;
 }
 
-.simulation-result small {
+.simulation-result p {
+  margin: -3px 0 0;
   color: #b0b0b0;
   line-height: 1.45;
+  font-size: 13px;
+}
+
+.simulation-result__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.simulation-result__metrics span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 9px 6px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 7px;
+  background: rgba(23, 32, 51, 0.72);
+  color: #7b8699;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.simulation-result__metrics strong {
+  color: #f5f5f5;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
 }
 
 .simulation-result__bar {
-  height: 4px;
+  height: 6px;
   overflow: hidden;
   border-radius: 999px;
   background: rgba(148, 163, 184, 0.14);
@@ -446,13 +481,14 @@
   height: 100%;
   border-radius: inherit;
   animation: simulation-result-bar 1800ms ease forwards;
-  background: linear-gradient(90deg, #e53935, #1e88e5, #43a047);
+  background: linear-gradient(90deg, #e53935, #1e88e5);
   transform-origin: left;
 }
 
-.simulation-result.is-complete .simulation-result__bar span {
+.simulation-result.is-complete .simulation-result__bar span,
+.simulation-result.is-stopped .simulation-result__bar span {
   animation: none;
-  transform: scaleX(1);
+  width: var(--affected-percent);
 }
 
 .simulation-result .button {

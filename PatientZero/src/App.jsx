@@ -27,6 +27,8 @@ const POPULATION_PREVIEW_FIELDS = new Set(["populationSize", "initialInfected", 
 const CHART_SAMPLE_INTERVAL_FRAMES = 5;
 const FINISHED_STATUS = "Simulation terminée";
 const STOPPED_STATUS = "Simulation arrêtée";
+const ACTIVE_STATUSES = ["Simulation en cours", "Pause"];
+const ENDED_STATUSES = [FINISHED_STATUS, STOPPED_STATUS];
 
 // Creates a generated population from the current UI parameters.
 const createPopulationFromParameters = (parameters) => {
@@ -81,9 +83,19 @@ function App() {
     () => population.getStats(),
     [population],
   );
-  const isSetupDisabled = status !== "Prêt";
+  const isSimulationEnded = ENDED_STATUSES.includes(status);
+  const isSetupDisabled = !["Prêt", ...ENDED_STATUSES].includes(status);
   const isSimulationRunning = status === "Simulation en cours";
-  const isSimulationStarted = ["Simulation en cours", "Pause", FINISHED_STATUS, STOPPED_STATUS].includes(status);
+  const isSimulationActive = ACTIVE_STATUSES.includes(status);
+  const isSimulationStarted = [...ACTIVE_STATUSES, ...ENDED_STATUSES].includes(status);
+
+  // Clears the elapsed session state without changing the selected parameters.
+  const clearSimulationSession = () => {
+    simulationTimeRef.current = 0;
+    frameCountRef.current = 0;
+    setSimulationTimeSeconds(0);
+    setChartHistory([]);
+  };
 
   // Updates one simulation parameter while preserving the others.
   const updateParameter = (name, value) => {
@@ -91,12 +103,16 @@ function App() {
 
     setParameters(nextParameters);
 
+    if (isSimulationEnded) {
+      setPopulation(createPopulationFromParameters(nextParameters));
+      setStatus("Prêt");
+      clearSimulationSession();
+      return;
+    }
+
     if (POPULATION_PREVIEW_FIELDS.has(name)) {
       if (status === "Prêt") {
-        simulationTimeRef.current = 0;
-        frameCountRef.current = 0;
-        setSimulationTimeSeconds(0);
-        setChartHistory([]);
+        clearSimulationSession();
       }
 
       setPopulation((currentPopulation) => {
@@ -114,20 +130,14 @@ function App() {
     setParameters(INITIAL_PARAMETERS);
     setPopulation(createPopulationFromParameters(INITIAL_PARAMETERS));
     setStatus("Prêt");
-    simulationTimeRef.current = 0;
-    frameCountRef.current = 0;
-    setSimulationTimeSeconds(0);
-    setChartHistory([]);
+    clearSimulationSession();
   };
 
   // Restarts the simulation with the current parameters instead of restoring defaults.
   const replaySimulation = () => {
     setPopulation(createPopulationFromParameters(parameters));
     setStatus("Prêt");
-    simulationTimeRef.current = 0;
-    frameCountRef.current = 0;
-    setSimulationTimeSeconds(0);
-    setChartHistory([]);
+    clearSimulationSession();
   };
 
   // Refreshes React state after p5.js has applied one simulation frame.
@@ -238,7 +248,7 @@ function App() {
       setup={
         <SetupPanel
           disabled={isSetupDisabled}
-          isSimulationStarted={isSimulationStarted}
+          isSimulationStarted={isSimulationActive}
           values={parameters}
           onChange={updateParameter}
           onReset={resetParameters}
