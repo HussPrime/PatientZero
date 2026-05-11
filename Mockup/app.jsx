@@ -836,13 +836,13 @@ function App() {
           </Panel>
 
           {/* Run info */}
-          <Panel title="Session" icon={<IconWave size={13} />}>
+          {/* <Panel title="Session" icon={<IconWave size={13} />}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <Row k="Modèle" v="SIR (susceptible–infected–recovered)" />
               <Row k="R₀ estimé" v={(params.transmission / 100 * 1.4).toFixed(2)} mono />
               <Row k="Durée écoulée" v={`${tick} pas`} mono />
             </div>
-          </Panel>
+          </Panel> */}
         </aside>
       </main>
 

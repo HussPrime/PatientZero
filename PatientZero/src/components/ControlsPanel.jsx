@@ -82,7 +82,7 @@ export function ControlsPanel({
         </div>
       </div>
 
-      <div className="session-summary">
+      {/* <div className="session-summary">
         <span>Session</span>
         <strong>{status}</strong>
         {isFinished || isStopped ? (
@@ -94,7 +94,7 @@ export function ControlsPanel({
         ) : (
           <small>Modèle SIR, propagation locale selon la distance et les paramètres actifs.</small>
         )}
-      </div>
+      </div> */}
     </section>
   );
 }

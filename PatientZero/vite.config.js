@@ -9,4 +9,10 @@ export default defineConfig(({command}) => ({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov']
+    },
+  },
 }))
