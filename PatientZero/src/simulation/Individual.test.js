@@ -21,6 +21,19 @@ describe("Individual", () => {
     expect(individual.infectionTime).toBe(0);
   });
 
+  it("starts with infection time at zero when created already infected", () => {
+    const individual = new Individual({
+      id: 1,
+      x: 10,
+      y: 20,
+      state: INDIVIDUAL_STATES.INFECTED,
+      infectionTime: 12,
+    });
+
+    expect(individual.isInfected()).toBe(true);
+    expect(individual.infectionTime).toBe(0);
+  });
+
   it("does not infect a recovered individual", () => {
     const individual = new Individual({ id: 1, x: 10, y: 20 });
 

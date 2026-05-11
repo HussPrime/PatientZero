@@ -42,6 +42,16 @@ describe("updateSimulation", () => {
     expect(healthyIndividual.state).toBe(INDIVIDUAL_STATES.HEALTHY);
   });
 
+  it("keeps a healthy individual healthy when transmission fails inside the radius", () => {
+    const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
+    const healthyIndividual = new Individual({ id: 2, x: 3, y: 4 });
+    infectedIndividual.infect();
+
+    updateSimulation([infectedIndividual, healthyIndividual], createUpdateSettings(), () => 1);
+
+    expect(healthyIndividual.state).toBe(INDIVIDUAL_STATES.HEALTHY);
+  });
+
   it("does not infect a recovered individual again", () => {
     const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
     const recoveredIndividual = new Individual({
@@ -57,6 +67,28 @@ describe("updateSimulation", () => {
     expect(recoveredIndividual.state).toBe(INDIVIDUAL_STATES.RECOVERED);
   });
 
+  it("does not evaluate infection twice for a candidate already infected during the same tick", () => {
+    const firstInfected = new Individual({ id: 1, x: 0, y: 0 });
+    const secondInfected = new Individual({ id: 2, x: 1, y: 0 });
+    const healthyIndividual = new Individual({ id: 3, x: 2, y: 0 });
+    let rngCalls = 0;
+
+    firstInfected.infect();
+    secondInfected.infect();
+
+    updateSimulation(
+      [firstInfected, secondInfected, healthyIndividual],
+      createUpdateSettings(),
+      () => {
+        rngCalls += 1;
+        return 0;
+      },
+    );
+
+    expect(healthyIndividual.state).toBe(INDIVIDUAL_STATES.INFECTED);
+    expect(rngCalls).toBe(1);
+  });
+
   it("keeps an already infected individual infected until the duration is reached", () => {
     const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
     infectedIndividual.infect();
@@ -64,6 +96,16 @@ describe("updateSimulation", () => {
     updateSimulation([infectedIndividual], createUpdateSettings({ infectionDuration: 4 }), () => 0);
 
     expect(infectedIndividual.state).toBe(INDIVIDUAL_STATES.INFECTED);
+  });
+
+  it("uses zero as the elapsed infection time fallback", () => {
+    const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
+    infectedIndividual.infect();
+    infectedIndividual.infectionTime = null;
+
+    updateSimulation([infectedIndividual], createUpdateSettings({ transmissionRate: 0 }), () => 0.99);
+
+    expect(infectedIndividual.infectionTime).toBeCloseTo(1 / 30);
   });
 
   it("increments infection time in seconds at x1 and recovers when the duration is reached", () => {

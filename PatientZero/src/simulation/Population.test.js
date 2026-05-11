@@ -165,6 +165,23 @@ describe("Population", () => {
     });
   });
 
+  it("ignores unknown states when computing current statistics", () => {
+    const population = new Population(
+      { populationSize: 1, initialInfected: 0, simulationWidth: 100, simulationHeight: 80 },
+      createStableRng(),
+    );
+
+    population.generate();
+    population.getIndividuals()[0].state = "unknown";
+
+    expect(population.getStats()).toEqual({
+      healthy: 0,
+      infected: 0,
+      recovered: 0,
+      total: 1,
+    });
+  });
+
   it("regenerates individuals when reset is called", () => {
     const population = new Population(
       { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80 },
