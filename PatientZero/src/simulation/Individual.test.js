@@ -8,6 +8,7 @@ describe("Individual", () => {
     const individual = new Individual({ id: 1, x: 10, y: 20 });
 
     expect(individual.isHealthy()).toBe(true);
+    expect(individual.getState()).toBe(INDIVIDUAL_STATES.HEALTHY);
     expect(individual.infectionTime).toBeNull();
   });
 
@@ -47,6 +48,28 @@ describe("Individual", () => {
     expect(individual.y).toBe(5);
     expect(individual.vx).toBe(-2);
     expect(individual.vy).toBe(2);
+  });
+
+  it("serializes its public simulation data", () => {
+    const individual = new Individual({
+      id: 7,
+      x: 12,
+      y: 18,
+      vx: 1,
+      vy: -2,
+      state: INDIVIDUAL_STATES.RECOVERED,
+      infectionTime: 4,
+    });
+
+    expect(individual.toJSON()).toEqual({
+      id: 7,
+      x: 12,
+      y: 18,
+      vx: 1,
+      vy: -2,
+      state: INDIVIDUAL_STATES.RECOVERED,
+      infectionTime: 4,
+    });
   });
 });
 

@@ -58,6 +58,36 @@ describe("Population", () => {
     ).toThrow("initialInfected cannot be greater than populationSize.");
   });
 
+  it("rejects invalid population sizes", () => {
+    expect(
+      () => new Population({ populationSize: -1, initialInfected: 0, simulationWidth: 100, simulationHeight: 80 }),
+    ).toThrow("populationSize must be a positive integer or zero.");
+
+    expect(
+      () => new Population({ populationSize: 2.5, initialInfected: 0, simulationWidth: 100, simulationHeight: 80 }),
+    ).toThrow("populationSize must be a positive integer or zero.");
+  });
+
+  it("rejects invalid initial infected counts", () => {
+    expect(
+      () => new Population({ populationSize: 3, initialInfected: -1, simulationWidth: 100, simulationHeight: 80 }),
+    ).toThrow("initialInfected must be a positive integer or zero.");
+
+    expect(
+      () => new Population({ populationSize: 3, initialInfected: 1.5, simulationWidth: 100, simulationHeight: 80 }),
+    ).toThrow("initialInfected must be a positive integer or zero.");
+  });
+
+  it("rejects invalid simulation dimensions", () => {
+    expect(
+      () => new Population({ populationSize: 3, initialInfected: 1, simulationWidth: 0, simulationHeight: 80 }),
+    ).toThrow("simulationWidth and simulationHeight must be greater than zero.");
+
+    expect(
+      () => new Population({ populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 0 }),
+    ).toThrow("simulationWidth and simulationHeight must be greater than zero.");
+  });
+
   it("keeps existing individuals when the population grows", () => {
     const population = new Population(
       { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80 },
@@ -86,6 +116,23 @@ describe("Population", () => {
     expect(population.getIndividuals()[0]).toBe(firstIndividual);
   });
 
+  it("lowers the infected preview count by turning extra infected individuals healthy", () => {
+    const population = new Population(
+      { populationSize: 5, initialInfected: 3, simulationWidth: 100, simulationHeight: 80 },
+      createStableRng(),
+    );
+
+    population.generate();
+    population.setInitialInfected(1);
+
+    expect(population.getStats()).toEqual({
+      healthy: 4,
+      infected: 1,
+      recovered: 0,
+      total: 5,
+    });
+  });
+
   it("updates point velocities when movement speed changes", () => {
     const population = new Population(
       { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80, movementSpeed: 1 },
@@ -99,6 +146,37 @@ describe("Population", () => {
       expect(Math.abs(individual.vx)).toBeLessThanOrEqual(3);
       expect(Math.abs(individual.vy)).toBeLessThanOrEqual(3);
     });
+  });
+
+  it("counts recovered individuals in current statistics", () => {
+    const population = new Population(
+      { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80 },
+      createStableRng(),
+    );
+
+    population.generate();
+    population.getIndividuals().find((individual) => individual.isInfected()).recover();
+
+    expect(population.getStats()).toEqual({
+      healthy: 2,
+      infected: 0,
+      recovered: 1,
+      total: 3,
+    });
+  });
+
+  it("regenerates individuals when reset is called", () => {
+    const population = new Population(
+      { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80 },
+      createStableRng(),
+    );
+    const initialIndividuals = population.generate();
+
+    const resetIndividuals = population.reset();
+
+    expect(resetIndividuals).toHaveLength(3);
+    expect(resetIndividuals).not.toBe(initialIndividuals);
+    expect(population.getStats().infected).toBe(1);
   });
 
   it("rejects negative movement speed values", () => {

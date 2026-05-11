@@ -4,6 +4,7 @@ import { Individual } from "./Individual";
 import {
   calculateDistance,
   calculateInfectionProbability,
+  isWithinInfectionRadius,
   shouldInfect,
   shouldRecover,
 } from "./infectionRules";
@@ -34,6 +35,11 @@ describe("infectionRules", () => {
 
   it("returns zero when two individuals have the same position", () => {
     expect(calculateDistance(createIndividual(12, 8), createIndividual(12, 8))).toBe(0);
+  });
+
+  it("detects whether two individuals are inside the infection radius", () => {
+    expect(isWithinInfectionRadius(createIndividual(0, 0), createIndividual(3, 4), 5)).toBe(true);
+    expect(isWithinInfectionRadius(createIndividual(0, 0), createIndividual(6, 0), 5)).toBe(false);
   });
 
   it("returns zero probability when the distance is greater than the infection radius", () => {
@@ -102,6 +108,12 @@ describe("infectionRules", () => {
     }))).toThrow("contactDuration must be greater than or equal to 0.");
   });
 
+  it("throws an explicit error when transmissionProbability is greater than one", () => {
+    expect(() => calculateInfectionProbability(createProbabilitySettings({
+      transmissionProbability: 1.01,
+    }))).toThrow("transmissionProbability must be between 0 and 1.");
+  });
+
   it("respects the formula-based transmission probability", () => {
     const certainContext = createProbabilitySettings({
       distance: 1,
@@ -128,5 +140,11 @@ describe("infectionRules", () => {
     individual.infectionTime = 9.99;
 
     expect(shouldRecover(individual, 10)).toBe(false);
+  });
+
+  it("does not recover individuals that are not infected", () => {
+    const individual = new Individual({ id: 1, x: 0, y: 0 });
+
+    expect(shouldRecover(individual, 0)).toBe(false);
   });
 });
