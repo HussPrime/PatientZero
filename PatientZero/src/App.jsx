@@ -11,6 +11,7 @@ import { StatsPanel } from "./components/StatsPanel";
 import { DEFAULT_SETTINGS } from "./constants/defaultSettings";
 import { Population } from "./simulation/Population";
 import { appendChartHistoryPoint, createChartHistoryPoint } from "./simulation/chartHistory";
+import { isSimulationComplete } from "./simulation/simulationCompletion";
 
 const INITIAL_PARAMETERS = {
   populationSize: DEFAULT_SETTINGS.populationSize,
@@ -18,14 +19,14 @@ const INITIAL_PARAMETERS = {
   infectionDuration: DEFAULT_SETTINGS.infectionDuration,
   movementSpeed: DEFAULT_SETTINGS.movementSpeed,
   transmissionRate: DEFAULT_SETTINGS.transmissionRate,
-  recoveryRate: DEFAULT_SETTINGS.recoveryRate,
   infectionRadius: DEFAULT_SETTINGS.infectionRadius,
-  randomMovement: true,
   simulationSpeed: 1,
 };
 
 const POPULATION_PREVIEW_FIELDS = new Set(["populationSize", "initialInfected", "movementSpeed"]);
 const CHART_SAMPLE_INTERVAL_FRAMES = 5;
+const FINISHED_STATUS = "Simulation terminée";
+const STOPPED_STATUS = "Simulation arrêtée";
 
 // Creates a generated population from the current UI parameters.
 const createPopulationFromParameters = (parameters) => {
@@ -75,7 +76,6 @@ function App() {
   const [population, setPopulation] = useState(() => createPopulationFromParameters(INITIAL_PARAMETERS));
   const simulationTimeRef = useRef(0);
   const frameCountRef = useRef(0);
-  const lastLoggedSecondRef = useRef(0);
 
   const stats = useMemo(
     () => population.getStats(),
@@ -83,7 +83,7 @@ function App() {
   );
   const isSetupDisabled = status !== "Prêt";
   const isSimulationRunning = status === "Simulation en cours";
-  const isSimulationStarted = status === "Simulation en cours" || status === "Pause";
+  const isSimulationStarted = ["Simulation en cours", "Pause", FINISHED_STATUS, STOPPED_STATUS].includes(status);
 
   // Updates one simulation parameter while preserving the others.
   const updateParameter = (name, value) => {
@@ -92,11 +92,13 @@ function App() {
     setParameters(nextParameters);
 
     if (POPULATION_PREVIEW_FIELDS.has(name)) {
-      simulationTimeRef.current = 0;
-      frameCountRef.current = 0;
-      lastLoggedSecondRef.current = 0;
-      setSimulationTimeSeconds(0);
-      setChartHistory([]);
+      if (status === "Prêt") {
+        simulationTimeRef.current = 0;
+        frameCountRef.current = 0;
+        setSimulationTimeSeconds(0);
+        setChartHistory([]);
+      }
+
       setPopulation((currentPopulation) => {
         const nextPopulation = new Population(currentPopulation.settings);
 
@@ -114,7 +116,16 @@ function App() {
     setStatus("Prêt");
     simulationTimeRef.current = 0;
     frameCountRef.current = 0;
-    lastLoggedSecondRef.current = 0;
+    setSimulationTimeSeconds(0);
+    setChartHistory([]);
+  };
+
+  // Restarts the simulation with the current parameters instead of restoring defaults.
+  const replaySimulation = () => {
+    setPopulation(createPopulationFromParameters(parameters));
+    setStatus("Prêt");
+    simulationTimeRef.current = 0;
+    frameCountRef.current = 0;
     setSimulationTimeSeconds(0);
     setChartHistory([]);
   };
@@ -123,21 +134,21 @@ function App() {
   const handleSimulationFrame = (timeStepSeconds = 0) => {
     const nextTimeSeconds = simulationTimeRef.current + timeStepSeconds;
     const nextFrameCount = frameCountRef.current + 1;
-    const nextWholeSecond = Math.floor(nextTimeSeconds);
-
-    for (let second = lastLoggedSecondRef.current + 1; second <= nextWholeSecond; second += 1) {
-      console.log(`Temps simule: ${second} s`);
-    }
 
     simulationTimeRef.current = nextTimeSeconds;
     frameCountRef.current = nextFrameCount;
-    lastLoggedSecondRef.current = Math.max(lastLoggedSecondRef.current, nextWholeSecond);
     setSimulationTimeSeconds(nextTimeSeconds);
 
     setPopulation((currentPopulation) => {
       const nextPopulation = new Population(currentPopulation.settings);
 
       nextPopulation.individuals = currentPopulation.getIndividuals().slice();
+      const nextStats = nextPopulation.getStats();
+
+      if (status === "Simulation en cours" && isSimulationComplete(nextStats, isSimulationStarted)) {
+        setStatus(FINISHED_STATUS);
+      }
+
       return nextPopulation;
     });
 
@@ -175,7 +186,7 @@ function App() {
 
   // Stops the simulation without changing the configured parameters.
   const stopSimulation = () => {
-    setStatus("Prêt");
+    setStatus(STOPPED_STATUS);
   };
 
   return (
@@ -186,11 +197,16 @@ function App() {
         <SimulationCanvas
           individuals={population?.getIndividuals() ?? []}
           infectionRadius={parameters.infectionRadius}
+          endReason={status === STOPPED_STATUS ? "stopped" : "completed"}
+          isFinished={status === FINISHED_STATUS || status === STOPPED_STATUS}
           isRunning={isSimulationRunning}
           parameters={parameters}
           simulationSpeed={parameters.simulationSpeed}
+          stats={stats}
+          timeSeconds={simulationTimeSeconds}
           onSimulationFrame={handleSimulationFrame}
           onToggleRun={toggleSimulation}
+          onReplay={replaySimulation}
         />
       }
       chart={
@@ -207,7 +223,10 @@ function App() {
           onSpeedChange={(value) => updateParameter("simulationSpeed", value)}
           onToggleRun={toggleSimulation}
           onStop={stopSimulation}
-          onReset={resetParameters}
+          onReset={replaySimulation}
+          isStopDisabled={status === FINISHED_STATUS || status === STOPPED_STATUS}
+          stats={stats}
+          timeSeconds={simulationTimeSeconds}
         />
       }
       liveSettings={

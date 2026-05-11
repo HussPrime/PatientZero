@@ -7,7 +7,6 @@ export const DEFAULT_SETTINGS = {
   movementSpeed: 1,
   infectionDuration: 4,
   transmissionRate: 28,
-  recoveryRate: 12,
   infectionRadius: 18,
 };
 
