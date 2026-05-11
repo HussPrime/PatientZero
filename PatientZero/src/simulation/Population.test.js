@@ -85,5 +85,32 @@ describe("Population", () => {
     expect(population.getTotal()).toBe(3);
     expect(population.getIndividuals()[0]).toBe(firstIndividual);
   });
+
+  it("updates point velocities when movement speed changes", () => {
+    const population = new Population(
+      { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80, movementSpeed: 1 },
+      createStableRng(),
+    );
+
+    population.generate();
+    population.setMovementSpeed(3);
+
+    population.getIndividuals().forEach((individual) => {
+      expect(Math.abs(individual.vx)).toBeLessThanOrEqual(3);
+      expect(Math.abs(individual.vy)).toBeLessThanOrEqual(3);
+    });
+  });
+
+  it("rejects negative movement speed values", () => {
+    expect(
+      () => new Population({
+        populationSize: 3,
+        initialInfected: 1,
+        simulationWidth: 100,
+        simulationHeight: 80,
+        movementSpeed: -1,
+      }),
+    ).toThrow("movementSpeed must be zero or greater.");
+  });
 });
 

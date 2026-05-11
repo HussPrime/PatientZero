@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
 import { Individual } from "./Individual";
-import { updateSimulation } from "./updateSimulation";
+import { getSimulationTimeStepSeconds, updateSimulation } from "./updateSimulation";
 
 const createUpdateSettings = (overrides = {}) => ({
   infectionDuration: 4,
@@ -13,6 +13,15 @@ const createUpdateSettings = (overrides = {}) => ({
 });
 
 describe("updateSimulation", () => {
+  it("converts real frame duration and speed into simulated seconds", () => {
+    expect(getSimulationTimeStepSeconds(createUpdateSettings({ simulationSpeed: 1 }))).toBeCloseTo(1 / 30);
+    expect(getSimulationTimeStepSeconds(createUpdateSettings({ simulationSpeed: 5 }))).toBeCloseTo(5 / 30);
+    expect(getSimulationTimeStepSeconds(createUpdateSettings({
+      frameDurationSeconds: 1,
+      simulationSpeed: 5,
+    }))).toBeCloseTo(5);
+  });
+
   it("infects a healthy individual inside the radius when transmission is certain", () => {
     const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
     const healthyIndividual = new Individual({ id: 2, x: 3, y: 4 });
@@ -68,7 +77,7 @@ describe("updateSimulation", () => {
     expect(infectedIndividual.state).toBe(INDIVIDUAL_STATES.RECOVERED);
   });
 
-  it("increments infection time faster when simulation speed is higher", () => {
+  it("increments infection time proportionally when simulation speed is higher", () => {
     const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
     infectedIndividual.infect();
 

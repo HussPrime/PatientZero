@@ -76,13 +76,13 @@ export function SetupPanel({
             value={values.infectionDuration}
           />
           <RangeField
-            label="Vitesse initiale"
+            label="Vitesse de déplacement"
             max={5}
             min={1}
             disabled={disabled}
-            onChange={(value) => onChange("initialSpeed", value)}
+            onChange={(value) => onChange("movementSpeed", value)}
             suffix="x"
-            value={values.initialSpeed}
+            value={values.movementSpeed}
           />
         </div>
 

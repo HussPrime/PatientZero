@@ -51,7 +51,7 @@ Les parametres par defaut sont dans `PatientZero/src/constants/defaultSettings.j
 - `populationSize`: nombre total d'individus.
 - `initialInfected`: nombre de patients zero.
 - `simulationWidth` et `simulationHeight`: dimensions de la zone.
-- `minInitialSpeed` et `maxInitialSpeed`: bornes pour les vitesses initiales.
+- `movementSpeed`: vitesse de déplacement des individus.
 
 La methode `generate()` fait quatre choses:
 

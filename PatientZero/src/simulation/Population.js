@@ -10,8 +10,7 @@ export class Population {
    * @param {number} [settings.initialInfected]
    * @param {number} [settings.simulationWidth]
    * @param {number} [settings.simulationHeight]
-   * @param {number} [settings.minInitialSpeed]
-   * @param {number} [settings.maxInitialSpeed]
+   * @param {number} [settings.movementSpeed]
    * @param {() => number} [rng]
    */
   constructor(settings = {}, rng = Math.random) {
@@ -24,7 +23,7 @@ export class Population {
 
   // Verifies that the population can be generated with coherent values.
   validateSettings() {
-    const { populationSize, initialInfected, simulationWidth, simulationHeight } = this.settings;
+    const { populationSize, initialInfected, simulationWidth, simulationHeight, movementSpeed } = this.settings;
 
     if (!Number.isInteger(populationSize) || populationSize < 0) {
       throw new Error("populationSize must be a positive integer or zero.");
@@ -41,6 +40,10 @@ export class Population {
     if (simulationWidth <= 0 || simulationHeight <= 0) {
       throw new Error("simulationWidth and simulationHeight must be greater than zero.");
     }
+
+    if (movementSpeed < 0) {
+      throw new Error("movementSpeed must be zero or greater.");
+    }
   }
 
   // Builds a new set of individuals and infects the configured patient zeros.
@@ -53,8 +56,6 @@ export class Population {
       if (infectedIds.has(id)) {
         individual.infect();
       }
-
-      // TODO: Apply user-selected initialSpeed here instead of only using min/max defaults.
       return individual;
     });
 
@@ -106,14 +107,14 @@ export class Population {
     return this.individuals;
   }
 
-  // Updates movement speed for future movement without changing positions.
-  setInitialSpeed(initialSpeed) {
-    this.settings.minInitialSpeed = -initialSpeed;
-    this.settings.maxInitialSpeed = initialSpeed;
+  // Updates the point movement speed without changing existing positions.
+  setMovementSpeed(movementSpeed) {
+    this.settings.movementSpeed = movementSpeed;
+    this.validateSettings();
 
     this.individuals.forEach((individual) => {
-      individual.vx = this.randomBetween(this.settings.minInitialSpeed, this.settings.maxInitialSpeed);
-      individual.vy = this.randomBetween(this.settings.minInitialSpeed, this.settings.maxInitialSpeed);
+      individual.vx = this.randomMovementVelocity();
+      individual.vy = this.randomMovementVelocity();
     });
 
     return this.individuals;
@@ -158,8 +159,8 @@ export class Population {
       id,
       x: this.randomBetween(0, this.settings.simulationWidth),
       y: this.randomBetween(0, this.settings.simulationHeight),
-      vx: this.randomBetween(this.settings.minInitialSpeed, this.settings.maxInitialSpeed),
-      vy: this.randomBetween(this.settings.minInitialSpeed, this.settings.maxInitialSpeed),
+      vx: this.randomMovementVelocity(),
+      vy: this.randomMovementVelocity(),
     });
   }
 
@@ -178,6 +179,11 @@ export class Population {
   // Produces a random number inside the requested range.
   randomBetween(min, max) {
     return min + this.rng() * (max - min);
+  }
+
+  // Produces a random velocity component using the configured point movement speed.
+  randomMovementVelocity() {
+    return this.randomBetween(-this.settings.movementSpeed, this.settings.movementSpeed);
   }
 }
 
