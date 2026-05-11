@@ -36,7 +36,7 @@ Dans le code, cette logique est implémentée par la fonction pure `calculateInf
 - `populationSize` : taille de la population, sans lien direct avec la formule.
 - `initialInfected` : nombre de patients zéro, sans lien direct avec la formule.
 - `infectionDuration` : durée d'infection avant guérison, sans lien avec la durée de contact.
-- `initialSpeed` : vitesse initiale des individus. Elle influence indirectement les contacts, mais elle n'entre pas directement dans la formule.
+- `movementSpeed` : vitesse de déplacement des individus. Elle influence indirectement les contacts, mais elle n'entre pas directement dans la formule.
 - `transmissionRate` : facteur de transmission affiché dans l'interface.
 - `recoveryRate` : conservé dans l'interface, mais la guérison actuelle dépend surtout de `infectionDuration`.
 - `infectionRadius` : rayon maximal et distance de référence de contamination.
@@ -104,7 +104,7 @@ Le modèle reste volontairement simple :
 
 - la durée réelle de contact entre deux individus n'est pas mémorisée;
 - le calcul compare encore chaque infecté avec les individus sains, ce qui peut devenir coûteux avec une très grande population;
-- `initialSpeed` influence les contacts seulement par le mouvement, pas directement dans la formule;
+- `movementSpeed` influence les contacts seulement par le mouvement, pas directement dans la formule;
 - `recoveryRate` n'est pas intégré à la contamination.
 
 ## Améliorations possibles

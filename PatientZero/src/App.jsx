@@ -1,5 +1,5 @@
 // Purpose: Root React component that wires the dashboard, settings, controls, and future simulation state together.
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ControlsPanel } from "./components/ControlsPanel";
 import { DashboardLayout } from "./components/DashboardLayout";
 import { EvolutionChart } from "./components/EvolutionChart";
@@ -10,12 +10,13 @@ import { SimulationCanvas } from "./components/SimulationCanvas";
 import { StatsPanel } from "./components/StatsPanel";
 import { DEFAULT_SETTINGS } from "./constants/defaultSettings";
 import { Population } from "./simulation/Population";
+import { appendChartHistoryPoint, createChartHistoryPoint } from "./simulation/chartHistory";
 
 const INITIAL_PARAMETERS = {
   populationSize: DEFAULT_SETTINGS.populationSize,
   initialInfected: DEFAULT_SETTINGS.initialInfected,
   infectionDuration: DEFAULT_SETTINGS.infectionDuration,
-  initialSpeed: 2,
+  movementSpeed: DEFAULT_SETTINGS.movementSpeed,
   transmissionRate: DEFAULT_SETTINGS.transmissionRate,
   recoveryRate: DEFAULT_SETTINGS.recoveryRate,
   infectionRadius: DEFAULT_SETTINGS.infectionRadius,
@@ -23,15 +24,15 @@ const INITIAL_PARAMETERS = {
   simulationSpeed: 1,
 };
 
-const POPULATION_PREVIEW_FIELDS = new Set(["populationSize", "initialInfected", "initialSpeed"]);
+const POPULATION_PREVIEW_FIELDS = new Set(["populationSize", "initialInfected", "movementSpeed"]);
+const CHART_SAMPLE_INTERVAL_FRAMES = 5;
 
 // Creates a generated population from the current UI parameters.
 const createPopulationFromParameters = (parameters) => {
   const population = new Population({
     populationSize: parameters.populationSize,
     initialInfected: parameters.initialInfected,
-    minInitialSpeed: -parameters.initialSpeed,
-    maxInitialSpeed: parameters.initialSpeed,
+    movementSpeed: parameters.movementSpeed,
   });
 
   population.generate();
@@ -48,8 +49,8 @@ const updatePopulationPreview = (population, parameters, changedField) => {
     population.setInitialInfected(parameters.initialInfected);
   }
 
-  if (changedField === "initialSpeed") {
-    population.setInitialSpeed(parameters.initialSpeed);
+  if (changedField === "movementSpeed") {
+    population.setMovementSpeed(parameters.movementSpeed);
   }
 
   return population;
@@ -68,9 +69,13 @@ const scrollToSimulationPanel = () => {
 // Renders the full application shell and owns the main simulation parameters.
 function App() {
   const [status, setStatus] = useState("Prêt");
-  const [tick, setTick] = useState(0);
+  const [simulationTimeSeconds, setSimulationTimeSeconds] = useState(0);
+  const [chartHistory, setChartHistory] = useState([]);
   const [parameters, setParameters] = useState(INITIAL_PARAMETERS);
   const [population, setPopulation] = useState(() => createPopulationFromParameters(INITIAL_PARAMETERS));
+  const simulationTimeRef = useRef(0);
+  const frameCountRef = useRef(0);
+  const lastLoggedSecondRef = useRef(0);
 
   const stats = useMemo(
     () => population.getStats(),
@@ -87,6 +92,11 @@ function App() {
     setParameters(nextParameters);
 
     if (POPULATION_PREVIEW_FIELDS.has(name)) {
+      simulationTimeRef.current = 0;
+      frameCountRef.current = 0;
+      lastLoggedSecondRef.current = 0;
+      setSimulationTimeSeconds(0);
+      setChartHistory([]);
       setPopulation((currentPopulation) => {
         const nextPopulation = new Population(currentPopulation.settings);
 
@@ -102,24 +112,54 @@ function App() {
     setParameters(INITIAL_PARAMETERS);
     setPopulation(createPopulationFromParameters(INITIAL_PARAMETERS));
     setStatus("Prêt");
-    setTick(0);
+    simulationTimeRef.current = 0;
+    frameCountRef.current = 0;
+    lastLoggedSecondRef.current = 0;
+    setSimulationTimeSeconds(0);
+    setChartHistory([]);
   };
 
   // Refreshes React state after p5.js has applied one simulation frame.
-  const handleSimulationFrame = () => {
+  const handleSimulationFrame = (timeStepSeconds = 0) => {
+    const nextTimeSeconds = simulationTimeRef.current + timeStepSeconds;
+    const nextFrameCount = frameCountRef.current + 1;
+    const nextWholeSecond = Math.floor(nextTimeSeconds);
+
+    for (let second = lastLoggedSecondRef.current + 1; second <= nextWholeSecond; second += 1) {
+      console.log(`Temps simule: ${second} s`);
+    }
+
+    simulationTimeRef.current = nextTimeSeconds;
+    frameCountRef.current = nextFrameCount;
+    lastLoggedSecondRef.current = Math.max(lastLoggedSecondRef.current, nextWholeSecond);
+    setSimulationTimeSeconds(nextTimeSeconds);
+
     setPopulation((currentPopulation) => {
       const nextPopulation = new Population(currentPopulation.settings);
 
       nextPopulation.individuals = currentPopulation.getIndividuals().slice();
       return nextPopulation;
     });
-    setTick((currentTick) => currentTick + 1);
+
+    if (nextFrameCount % CHART_SAMPLE_INTERVAL_FRAMES === 0) {
+      setChartHistory((currentHistory) => appendChartHistoryPoint(
+        currentHistory,
+        createChartHistoryPoint(nextTimeSeconds, population.getStats()),
+      ));
+    }
   };
 
   // Starts the first version of the simulation flow.
   const startSimulation = () => {
     setStatus("Simulation en cours");
-    setTick((currentTick) => (currentTick === 0 ? 1 : currentTick));
+    setChartHistory((currentHistory) => (
+      currentHistory.length === 0
+        ? [
+          createChartHistoryPoint(0, stats),
+          createChartHistoryPoint(1, stats),
+        ]
+        : currentHistory
+    ));
     scrollToSimulationPanel();
   };
 
@@ -140,7 +180,7 @@ function App() {
 
   return (
     <DashboardLayout
-      header={<Header status={status} tick={tick} />}
+      header={<Header status={status} simulationTimeSeconds={simulationTimeSeconds} />}
       stats={<StatsPanel stats={stats} />}
       simulation={
         <SimulationCanvas
@@ -154,9 +194,10 @@ function App() {
         />
       }
       chart={
-        // TODO: Replace this empty array with historical stats collected after each simulation tick.
         <EvolutionChart
-          data={[]}
+          data={chartHistory}
+          liveStats={stats}
+          liveTimeSeconds={simulationTimeSeconds}
         />
       }
       controls={

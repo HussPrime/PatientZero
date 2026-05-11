@@ -4,13 +4,14 @@ import P5 from "p5";
 import { IconChip } from "./Icons";
 import { Legend } from "./Legend";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
-import { updateSimulation } from "../simulation/updateSimulation";
+import { getSimulationTimeStepSeconds, updateSimulation } from "../simulation/updateSimulation";
 
 const CANVAS_WIDTH = 900;
 const CANVAS_HEIGHT = 520;
 const INDIVIDUAL_RADIUS = 4;
 const MIN_CANVAS_WIDTH = 320;
 const MIN_CANVAS_HEIGHT = 260;
+const TARGET_FRAME_DURATION_SECONDS = 1 / 30;
 
 const STATE_COLORS = {
   [INDIVIDUAL_STATES.HEALTHY]: "#43a047",
@@ -82,6 +83,8 @@ export function SimulationCanvas({
       return undefined;
     }
 
+    let isDisposed = false;
+
     const sketch = (p) => {
       p.setup = () => {
         const size = getCanvasSize(containerRef.current);
@@ -100,6 +103,10 @@ export function SimulationCanvas({
       };
 
       p.draw = () => {
+        if (isDisposed) {
+          return;
+        }
+
         p.clear();
         const {
           individuals: currentIndividuals,
@@ -117,12 +124,19 @@ export function SimulationCanvas({
         }
 
         if (currentIsRunning) {
+          const frameDurationSeconds = Number.isFinite(p.deltaTime)
+            ? p.deltaTime / 1000
+            : TARGET_FRAME_DURATION_SECONDS;
+          const movementMultiplier = currentSpeed * (frameDurationSeconds / TARGET_FRAME_DURATION_SECONDS);
+          const nextParameters = { ...currentParameters, frameDurationSeconds };
+          const timeStepSeconds = getSimulationTimeStepSeconds(nextParameters);
+
           currentIndividuals.forEach((individual) => {
-            individual.move(CANVAS_WIDTH, CANVAS_HEIGHT, currentSpeed, INDIVIDUAL_RADIUS);
+            individual.move(CANVAS_WIDTH, CANVAS_HEIGHT, movementMultiplier, INDIVIDUAL_RADIUS);
           });
 
-          updateSimulation(currentIndividuals, currentParameters);
-          currentOnSimulationFrame?.();
+          updateSimulation(currentIndividuals, nextParameters);
+          currentOnSimulationFrame?.(timeStepSeconds);
         }
 
         currentIndividuals.forEach((individual) => {
@@ -140,6 +154,8 @@ export function SimulationCanvas({
     resizeObserver.observe(containerRef.current);
 
     return () => {
+      isDisposed = true;
+      instance.noLoop();
       resizeObserver.disconnect();
       instance.remove();
     };

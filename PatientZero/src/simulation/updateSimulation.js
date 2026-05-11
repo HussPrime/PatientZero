@@ -8,6 +8,7 @@ import {
 
 const DEFAULT_UPDATE_SETTINGS = {
   contactDuration: 1,
+  frameDurationSeconds: 1 / 30,
   infectionDuration: 4,
   infectionRadius: 18,
   referenceContactDuration: 1,
@@ -15,13 +16,18 @@ const DEFAULT_UPDATE_SETTINGS = {
   simulationSpeed: 1,
   transmissionRate: 0,
 };
-const FRAMES_PER_SECOND_AT_X1 = 30;
-const FRAME_DURATION_SECONDS = 1 / FRAMES_PER_SECOND_AT_X1;
+
+// Converts real elapsed time and selected speed into simulated seconds.
+export function getSimulationTimeStepSeconds(settings = {}) {
+  const nextSettings = { ...DEFAULT_UPDATE_SETTINGS, ...settings };
+
+  return nextSettings.frameDurationSeconds * nextSettings.simulationSpeed;
+}
 
 // Updates infection, infection duration, and recovery for one simulation tick.
 export function updateSimulation(individuals, settings = {}, rng = Math.random) {
   const nextSettings = { ...DEFAULT_UPDATE_SETTINGS, ...settings };
-  const timeStepSeconds = FRAME_DURATION_SECONDS * nextSettings.simulationSpeed;
+  const timeStepSeconds = getSimulationTimeStepSeconds(nextSettings);
   const infectedIndividuals = individuals.filter((individual) => individual.isInfected());
   const newlyInfected = new Set();
 
