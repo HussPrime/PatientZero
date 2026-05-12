@@ -33,6 +33,10 @@ La valeur mobile initiale etait trop basse et ne produisait pas l'effet attendu.
 
 La valeur tablette fixe `360px` etait egalement trop basse. Elle a ete remplacee par `min(72svh, 680px)` afin que la zone p5.js soit plus haute sur tablette, tout en restant sous la hauteur visible de l'ecran.
 
+## Correction bureau
+
+La hauteur tablette avait ete placee dans le breakpoint `max-width: 1240px`, ce qui pouvait affecter une fenetre de bureau reduite. La variable tablette a ete deplacee dans une plage plus stricte, `769px` a `1024px`, pour remettre la version bureau sur la hauteur normale du layout.
+
 ## Fichiers modifies
 
 - `PatientZero/src/styles/components.css`

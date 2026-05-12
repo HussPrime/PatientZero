@@ -1225,6 +1225,13 @@
   }
 }
 
+@media (min-width: 769px) and (max-width: 1024px) {
+  .simulation-canvas {
+    height: var(--simulation-canvas-height);
+    min-height: var(--simulation-canvas-height);
+  }
+}
+
 @media (max-width: 768px) {
   .setup-grid {
     grid-template-columns: 1fr;
