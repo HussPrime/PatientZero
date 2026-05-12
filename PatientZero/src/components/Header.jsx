@@ -10,6 +10,23 @@ const NAVIGATION_ITEMS = [
   { href: "#setup", label: "Paramètres" },
 ];
 
+// Scrolls a dashboard section into the center of the viewport.
+const scrollToCenteredSection = (event, href) => {
+  const targetId = href.replace("#", "");
+  const target = document.getElementById(targetId);
+
+  if (!target) {
+    return;
+  }
+
+  event.preventDefault();
+  window.history.pushState(null, "", href);
+  target.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+};
+
 // Renders the top header with status-dependent visual feedback.
 export function Header({ status, simulationTimeSeconds = 0 }) {
   const isRunning = status === "Simulation en cours";
@@ -30,7 +47,12 @@ export function Header({ status, simulationTimeSeconds = 0 }) {
       <div className="main-nav-shell">
         <nav className="main-nav" aria-label="Navigation principale">
           {NAVIGATION_ITEMS.map((item) => (
-            <a className="main-nav__link" href={item.href} key={item.href}>
+            <a
+              className="main-nav__link"
+              href={item.href}
+              key={item.href}
+              onClick={(event) => scrollToCenteredSection(event, item.href)}
+            >
               {item.label}
             </a>
           ))}
