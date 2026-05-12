@@ -1,7 +1,7 @@
 // Purpose: Provides the controls used to pause, stop, reset, and tune simulation speed.
 import { IconBolt, IconPause, IconPlay, IconReset, IconStop } from "./Icons";
 
-const SPEED_OPTIONS = [1, 2, 3, 4, 5];
+const SPEED_OPTIONS = [0.5, 1, 2, 3, 5];
 const FINISHED_STATUS = "Simulation terminée";
 const STOPPED_STATUS = "Simulation arrêtée";
 
