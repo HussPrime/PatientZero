@@ -20,6 +20,12 @@ const STATE_COLORS = {
   [INDIVIDUAL_STATES.DEAD]: "#334155",
 };
 
+const RESULT_BAR_COLORS = {
+  infected: "#e53935",
+  recovered: "#1e88e5",
+  dead: "#020617",
+};
+
 // Reads the visible container size used by the responsive p5.js canvas.
 const getCanvasSize = (element) => ({
   width: Math.max(MIN_CANVAS_WIDTH, Math.floor(element.clientWidth)),
@@ -48,6 +54,44 @@ const drawIndividual = (p, individual, infectionRadius) => {
   p.noStroke();
   p.fill(color);
   p.circle(x, y, radius * 2);
+};
+
+// Builds one continuous gradient where each state color is positioned from its final share.
+const createResultBarGradient = ({ infected = 0, recovered = 0, dead = 0 }) => {
+  const total = infected + recovered + dead;
+  const segments = [
+    { count: infected, color: RESULT_BAR_COLORS.infected },
+    { count: recovered, color: RESULT_BAR_COLORS.recovered },
+    { count: dead, color: RESULT_BAR_COLORS.dead },
+  ].filter((segment) => segment.count > 0);
+
+  if (segments.length === 0) {
+    return "transparent";
+  }
+
+  if (segments.length === 1) {
+    return segments[0].color;
+  }
+
+  let cumulative = 0;
+  const colorStops = segments.flatMap((segment, index) => {
+    const start = (cumulative / total) * 100;
+    const middle = ((cumulative + (segment.count / 2)) / total) * 100;
+
+    cumulative += segment.count;
+
+    if (index === 0) {
+      return [`${segment.color} 0%`, `${segment.color} ${middle}%`];
+    }
+
+    if (index === segments.length - 1) {
+      return [`${segment.color} ${middle}%`, `${segment.color} 100%`];
+    }
+
+    return [`${segment.color} ${middle}%`, `${segment.color} ${start + ((cumulative / total) * 100 - start) / 2}%`];
+  });
+
+  return `linear-gradient(90deg, ${colorStops.join(", ")})`;
 };
 
 // Renders the p5.js simulation panel and applies the current run speed.
@@ -183,6 +227,11 @@ export function SimulationCanvas({
 
   const affectedCount = (stats?.recovered ?? 0) + (stats?.infected ?? 0) + (stats?.dead ?? 0);
   const affectedPercent = stats?.total > 0 ? Math.round((affectedCount / stats.total) * 100) : 0;
+  const resultBarGradient = createResultBarGradient({
+    infected: stats?.infected ?? 0,
+    recovered: stats?.recovered ?? 0,
+    dead: stats?.dead ?? 0,
+  });
   const finalTime = Math.floor(timeSeconds);
   const isStopped = endReason === "stopped";
   const resultKey = [
@@ -266,10 +315,13 @@ export function SimulationCanvas({
             </div>
             <div
               className="simulation-result__bar"
-              aria-label={`${affectedPercent} % de la population a été touchée`}
+              aria-label={`${affectedPercent} % de la population touchée: ${stats.infected} infectés, ${stats.recovered} guéris, ${stats.dead ?? 0} morts`}
               style={{ "--affected-percent": `${affectedPercent}%` }}
             >
-              <span />
+              <span
+                className="simulation-result__bar-fill"
+                style={{ background: resultBarGradient }}
+              />
             </div>
             <button
                 className="button button--primary"

@@ -228,16 +228,51 @@
   border-radius: 8px;
   background: #1e293b;
   overflow: hidden;
+  --panel-neon-color: #94a3b8;
+  --panel-neon-soft: rgba(148, 163, 184, 0.16);
+  --panel-neon-strong: rgba(148, 163, 184, 0.32);
   transition:
+    background-color 160ms ease,
     border-color 160ms ease,
     box-shadow 160ms ease,
     transform 160ms ease;
 }
 
 .panel:hover {
-  border-color: rgba(148, 163, 184, 0.26);
-  box-shadow: 0 14px 34px rgba(2, 6, 23, 0.18);
-  transform: translateY(-1px);
+  border-color: var(--panel-neon-strong);
+  background:
+    radial-gradient(circle at 18% 0%, var(--panel-neon-soft), transparent 34%),
+    #1e293b;
+  box-shadow:
+    0 0 0 1px var(--panel-neon-soft),
+    0 0 22px var(--panel-neon-soft),
+    0 16px 38px rgba(2, 6, 23, 0.3);
+  transform: translateY(-2px);
+}
+
+.setup-panel {
+  --panel-neon-color: #e53935;
+  --panel-neon-soft: rgba(229, 57, 53, 0.16);
+  --panel-neon-strong: rgba(229, 57, 53, 0.42);
+}
+
+.simulation-panel,
+.live-settings-panel {
+  --panel-neon-color: #1e88e5;
+  --panel-neon-soft: rgba(30, 136, 229, 0.18);
+  --panel-neon-strong: rgba(30, 136, 229, 0.46);
+}
+
+.chart-panel {
+  --panel-neon-color: #43a047;
+  --panel-neon-soft: rgba(67, 160, 71, 0.18);
+  --panel-neon-strong: rgba(67, 160, 71, 0.44);
+}
+
+.controls-panel {
+  --panel-neon-color: #fdd835;
+  --panel-neon-soft: rgba(253, 216, 53, 0.16);
+  --panel-neon-strong: rgba(253, 216, 53, 0.42);
 }
 
 .panel__header {
@@ -297,10 +332,12 @@
 }
 
 .panel:hover .panel-title__icon {
-  border-color: rgba(148, 163, 184, 0.3);
-  background: rgba(148, 163, 184, 0.1);
+  border-color: var(--panel-neon-strong);
+  background: var(--panel-neon-soft);
   color: #f5f5f5;
-  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.05);
+  box-shadow:
+    0 0 0 3px var(--panel-neon-soft),
+    0 0 12px var(--panel-neon-soft);
 }
 
 .panel:hover .panel-title__icon--danger {
@@ -627,20 +664,11 @@
   background: rgba(148, 163, 184, 0.14);
 }
 
-.simulation-result__bar span {
+.simulation-result__bar-fill {
   display: block;
-  width: 100%;
+  width: var(--affected-percent);
   height: 100%;
   border-radius: inherit;
-  animation: simulation-result-bar 1800ms ease forwards;
-  background: linear-gradient(90deg, #e53935, #1e88e5);
-  transform-origin: left;
-}
-
-.simulation-result.is-complete .simulation-result__bar span,
-.simulation-result.is-stopped .simulation-result__bar span {
-  animation: none;
-  width: var(--affected-percent);
 }
 
 .simulation-result .button {
@@ -658,16 +686,6 @@
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes simulation-result-bar {
-  from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
   }
 }
 

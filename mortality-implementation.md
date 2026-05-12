@@ -18,6 +18,10 @@
 - Renforcement du survol des cartes de statistiques avec des effets néon propres à chaque catégorie.
 - Ajustement de l'effet néon des statistiques: retrait du glow sur le texte et accent mis autour de la barre de pourcentage.
 - Retrait du glow autour des libellés de statistiques afin que l'effet lumineux reste concentré sur les cartes et les barres.
+- Ajout d'un halo néon au survol des sections principales, avec une couleur adaptée à chaque panneau.
+- Remplacement de la barre de fin en dégradé par une barre segmentée: rouge pour infectés, bleu pour guéris, noir pour morts, proportionnelle aux compteurs.
+- Ajout de dégradés dans chaque segment de la barre de fin tout en conservant les proportions par état.
+- Correction de la barre de fin en vrai dégradé continu, calculé depuis les proportions infectés/guéris/morts.
 
 ## Problèmes rencontrés
 
