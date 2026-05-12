@@ -23,6 +23,7 @@ describe("chartHistory", () => {
       healthy: 8,
       infected: 3,
       recovered: 1,
+      dead: 0,
     });
   });
 

@@ -37,6 +37,7 @@ describe("Population", () => {
       healthy: 15,
       infected: 5,
       recovered: 0,
+      dead: 0,
       total: 20,
     });
   });
@@ -129,6 +130,7 @@ describe("Population", () => {
       healthy: 4,
       infected: 1,
       recovered: 0,
+      dead: 0,
       total: 5,
     });
   });
@@ -161,6 +163,25 @@ describe("Population", () => {
       healthy: 2,
       infected: 0,
       recovered: 1,
+      dead: 0,
+      total: 3,
+    });
+  });
+
+  it("counts dead individuals in current statistics", () => {
+    const population = new Population(
+      { populationSize: 3, initialInfected: 1, simulationWidth: 100, simulationHeight: 80 },
+      createStableRng(),
+    );
+
+    population.generate();
+    population.getIndividuals().find((individual) => individual.isInfected()).die();
+
+    expect(population.getStats()).toEqual({
+      healthy: 2,
+      infected: 0,
+      recovered: 0,
+      dead: 1,
       total: 3,
     });
   });
@@ -178,6 +199,7 @@ describe("Population", () => {
       healthy: 0,
       infected: 0,
       recovered: 0,
+      dead: 0,
       total: 1,
     });
   });

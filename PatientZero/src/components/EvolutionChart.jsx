@@ -9,6 +9,7 @@ const CHART_COLORS = {
   healthy: "#43A047",
   infected: "#E53935",
   recovered: "#1E88E5",
+  dead: "#334155",
 };
 
 const HOVER_GUIDE_PLUGIN = {
@@ -85,6 +86,21 @@ const createChartDatasets = (data) => [
     pointRadius: 3,
     tension: 0.35,
   },
+  {
+    label: "Morts",
+    data: data.map((item) => ({ x: item.timeSeconds, y: item.dead ?? 0 })),
+    borderColor: CHART_COLORS.dead,
+    backgroundColor: "rgba(123, 134, 153, 0.12)",
+    pointBackgroundColor: CHART_COLORS.dead,
+    pointBorderColor: "#172033",
+    pointHoverBackgroundColor: CHART_COLORS.dead,
+    pointHoverBorderColor: "#F5F5F5",
+    pointHoverBorderWidth: 3,
+    pointHoverRadius: 7,
+    pointHitRadius: 12,
+    pointRadius: 3,
+    tension: 0.35,
+  },
 ];
 
 // Updates existing Chart.js dataset objects so hover state is not reset on each new second.
@@ -106,7 +122,11 @@ const getLiveCountForDataset = (stats, label) => {
     return stats.infected;
   }
 
-  return stats.recovered;
+  if (label === "Guéris") {
+    return stats.recovered;
+  }
+
+  return stats.dead ?? 0;
 };
 
 // Activates the latest recorded point so the tooltip can display live values there.
@@ -147,10 +167,10 @@ const showLatestTooltipIfCursorIsOnRightEdge = (chart, event, data) => {
   return true;
 };
 
-// Renders and updates the line chart for healthy, infected, and recovered counts.
+// Renders and updates the line chart for every visible health-state count.
 export function EvolutionChart({
   data,
-  liveStats = { healthy: 0, infected: 0, recovered: 0, total: 0 },
+  liveStats = { healthy: 0, infected: 0, recovered: 0, dead: 0, total: 0 },
   liveTimeSeconds = 0,
 }) {
   const canvasRef = useRef(null);
@@ -213,7 +233,7 @@ export function EvolutionChart({
                 const point = dataRef.current[context.dataIndex];
                 const total = isCursorOnLiveEdgeRef.current
                   ? liveStatsRef.current.total
-                  : point ? point.healthy + point.infected + point.recovered : 0;
+                  : point ? point.healthy + point.infected + point.recovered + (point.dead ?? 0) : 0;
                 const count = isCursorOnLiveEdgeRef.current
                   ? getLiveCountForDataset(liveStatsRef.current, context.dataset.label)
                   : context.parsed.y;
@@ -232,7 +252,7 @@ export function EvolutionChart({
                 const point = dataRef.current[items[0]?.dataIndex];
                 const total = isCursorOnLiveEdgeRef.current
                   ? liveStatsRef.current.total
-                  : point ? point.healthy + point.infected + point.recovered : 0;
+                  : point ? point.healthy + point.infected + point.recovered + (point.dead ?? 0) : 0;
 
                 return [`Total: ${total} individus`];
               },

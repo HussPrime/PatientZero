@@ -1,7 +1,7 @@
 // Purpose: Placeholder for the p5.js canvas that will render the moving population.
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import P5 from "p5";
-import { IconChip, IconReset } from "./Icons";
+import { IconChip, IconClose, IconReset } from "./Icons";
 import { Legend } from "./Legend";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
 import { getSimulationTimeStepSeconds, updateSimulation } from "../simulation/updateSimulation";
@@ -17,6 +17,7 @@ const STATE_COLORS = {
   [INDIVIDUAL_STATES.HEALTHY]: "#43a047",
   [INDIVIDUAL_STATES.INFECTED]: "#e53935",
   [INDIVIDUAL_STATES.RECOVERED]: "#1e88e5",
+  [INDIVIDUAL_STATES.DEAD]: "#334155",
 };
 
 // Reads the visible container size used by the responsive p5.js canvas.
@@ -65,6 +66,7 @@ export function SimulationCanvas({
   onToggleRun,
 }) {
   const containerRef = useRef(null);
+  const [dismissedResultKey, setDismissedResultKey] = useState(null);
   const dataRef = useRef({
     individuals,
     infectionRadius,
@@ -168,9 +170,7 @@ export function SimulationCanvas({
 
   // Toggles play/pause when the user activates the simulation area.
   const handleCanvasClick = () => {
-    if (!isFinished) {
-      onToggleRun();
-    }
+    onToggleRun();
   };
 
   // Toggles play/pause from the keyboard while the simulation is not ended.
@@ -181,10 +181,19 @@ export function SimulationCanvas({
     }
   };
 
-  const affectedCount = (stats?.recovered ?? 0) + (stats?.infected ?? 0);
+  const affectedCount = (stats?.recovered ?? 0) + (stats?.infected ?? 0) + (stats?.dead ?? 0);
   const affectedPercent = stats?.total > 0 ? Math.round((affectedCount / stats.total) * 100) : 0;
   const finalTime = Math.floor(timeSeconds);
   const isStopped = endReason === "stopped";
+  const resultKey = [
+    endReason,
+    finalTime,
+    stats?.healthy ?? 0,
+    stats?.infected ?? 0,
+    stats?.recovered ?? 0,
+    stats?.dead ?? 0,
+  ].join(":");
+  const shouldShowResult = isFinished && dismissedResultKey !== resultKey;
 
   return (
     <section className="panel simulation-panel">
@@ -212,8 +221,22 @@ export function SimulationCanvas({
       >
         {individuals.length === 0 ? <div className="simulation-empty-state">Population non générée</div> : null}
         <Legend />
-        {isFinished ? (
-          <div className={`simulation-result ${isStopped ? "is-stopped" : "is-complete"}`}>
+        {shouldShowResult ? (
+          <div
+            className={`simulation-result ${isStopped ? "is-stopped" : "is-complete"}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              aria-label="Fermer le résumé de fin"
+              className="simulation-result__close"
+              onClick={(event) => {
+                event.stopPropagation();
+                setDismissedResultKey(resultKey);
+              }}
+              type="button"
+            >
+              <IconClose size={15} />
+            </button>
             <span className="simulation-result__eyebrow">{isStopped ? "Simulation arrêtée" : "Simulation terminée"}</span>
             <strong>{isStopped ? "Simulation stoppée manuellement" : "Plus aucun individu infecté"}</strong>
             <p>
@@ -227,6 +250,10 @@ export function SimulationCanvas({
               <span>
                 <strong>{stats.recovered}</strong>
                 Guéris
+              </span>
+              <span>
+                <strong>{stats.dead ?? 0}</strong>
+                Morts
               </span>
               <span>
                 <strong>{stats.infected}</strong>

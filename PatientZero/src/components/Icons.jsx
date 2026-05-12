@@ -56,6 +56,16 @@ export function IconClock(props) {
   );
 }
 
+// Renders a close icon for dismissible overlays.
+export function IconClose(props) {
+  return (
+    <Icon {...props}>
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </Icon>
+  );
+}
+
 // Renders a filled dot used for state color indicators.
 export function IconDot(props) {
   return (

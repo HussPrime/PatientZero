@@ -7,6 +7,7 @@ const STAT_CARDS = [
   { key: "healthy", label: "Sains", color: "healthy", icon: IconDot },
   { key: "infected", label: "Infectés", color: "infected", icon: IconDot },
   { key: "recovered", label: "Guéris", color: "recovered", icon: IconShield },
+  { key: "dead", label: "Morts", color: "dead", icon: IconDot },
 ];
 
 // Highlights only the statistic card selected by the user.
@@ -20,7 +21,7 @@ export function StatsPanel({ stats }) {
   return (
     <div className="stats-grid" aria-label="Statistiques de simulation">
       {STAT_CARDS.map((card) => {
-        const value = stats[card.key];
+        const value = stats[card.key] ?? 0;
         const percent = card.key === "total" ? 100 : (value / stats.total) * 100;
 
         // TODO: Guard against total = 0 if user validation later allows an empty population.

@@ -3,8 +3,10 @@ import { describe, expect, it } from "vitest";
 import { Individual } from "./Individual";
 import {
   calculateDistance,
+  calculateDeathProbability,
   calculateInfectionProbability,
   isWithinInfectionRadius,
+  shouldDie,
   shouldInfect,
   shouldRecover,
 } from "./infectionRules";
@@ -124,6 +126,24 @@ describe("infectionRules", () => {
 
     expect(shouldInfect(certainContext, () => 0.99)).toBe(true);
     expect(shouldInfect(impossibleContext, () => 0)).toBe(false);
+  });
+
+  it("calculates death probability from the cure rate", () => {
+    expect(calculateDeathProbability({ cureRate: 100 })).toBe(0);
+    expect(calculateDeathProbability({ cureRate: 75 })).toBe(0.25);
+    expect(calculateDeathProbability({ cureRate: 0 })).toBe(1);
+  });
+
+  it("throws an explicit error when cureRate is invalid", () => {
+    expect(() => calculateDeathProbability({ cureRate: -1 })).toThrow(
+      "cureRate must be greater than or equal to 0.",
+    );
+    expect(() => calculateDeathProbability({ cureRate: 101 })).toThrow("cureRate must be between 0 and 100.");
+  });
+
+  it("uses death probability to decide the infection outcome", () => {
+    expect(shouldDie({ cureRate: 0 }, () => 0.99)).toBe(true);
+    expect(shouldDie({ cureRate: 100 }, () => 0)).toBe(false);
   });
 
   it("recovers infected individuals after the configured duration", () => {

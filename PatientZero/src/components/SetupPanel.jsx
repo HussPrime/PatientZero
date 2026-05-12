@@ -53,7 +53,7 @@ export function SetupPanel({
           <h3>Population</h3>
           <RangeField
             label="Taille de la population"
-            max={5000}
+            max={10000}
             min={50}
             disabled={disabled}
             onChange={(value) => onChange("populationSize", value)}
@@ -99,6 +99,15 @@ export function SetupPanel({
             onChange={(value) => onChange("infectionDuration", value)}
             suffix=" s"
             value={values.infectionDuration}
+          />
+          <RangeField
+            label="Taux de guérison"
+            max={100}
+            min={0}
+            disabled={disabled}
+            onChange={(value) => onChange("cureRate", value)}
+            suffix=" %"
+            value={values.cureRate}
           />
           <RangeField
             label="Rayon d'infection"

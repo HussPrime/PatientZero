@@ -43,6 +43,35 @@ describe("Individual", () => {
     expect(individual.isRecovered()).toBe(true);
   });
 
+  it("can die after the infection cycle", () => {
+    const individual = new Individual({ id: 1, x: 10, y: 20 });
+
+    individual.infect();
+    individual.die();
+
+    expect(individual.isDead()).toBe(true);
+    expect(individual.getState()).toBe(INDIVIDUAL_STATES.DEAD);
+  });
+
+  it("does not infect a dead individual", () => {
+    const individual = new Individual({ id: 1, x: 10, y: 20 });
+
+    individual.die();
+    individual.infect();
+
+    expect(individual.isDead()).toBe(true);
+  });
+
+  it("does not move dead individuals", () => {
+    const individual = new Individual({ id: 1, x: 10, y: 20, vx: 2, vy: -1 });
+
+    individual.die();
+    individual.move(100, 100, 3);
+
+    expect(individual.x).toBe(10);
+    expect(individual.y).toBe(20);
+  });
+
   it("uses the speed multiplier when moving", () => {
     const individual = new Individual({ id: 1, x: 10, y: 20, vx: 2, vy: -1 });
 
@@ -70,7 +99,7 @@ describe("Individual", () => {
       y: 18,
       vx: 1,
       vy: -2,
-      state: INDIVIDUAL_STATES.RECOVERED,
+      state: INDIVIDUAL_STATES.DEAD,
       infectionTime: 4,
     });
 
@@ -80,7 +109,7 @@ describe("Individual", () => {
       y: 18,
       vx: 1,
       vy: -2,
-      state: INDIVIDUAL_STATES.RECOVERED,
+      state: INDIVIDUAL_STATES.DEAD,
       infectionTime: 4,
     });
   });

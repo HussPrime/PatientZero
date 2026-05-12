@@ -45,14 +45,19 @@ export class Individual {
     return this.state === INDIVIDUAL_STATES.RECOVERED;
   }
 
+  // Checks whether the individual has died after the infection cycle.
+  isDead() {
+    return this.state === INDIVIDUAL_STATES.DEAD;
+  }
+
   // Returns the current health state.
   getState() {
     return this.state
   }
 
-  // Marks the individual as infected unless they are already recovered.
+  // Marks the individual as infected unless they are already protected from reinfection.
   infect() {
-    if (this.isRecovered()) {
+    if (this.isRecovered() || this.isDead()) {
       return;
     }
 
@@ -65,8 +70,17 @@ export class Individual {
     this.state = INDIVIDUAL_STATES.RECOVERED;
   }
 
+  // Marks the individual as dead after the infection duration.
+  die() {
+    this.state = INDIVIDUAL_STATES.DEAD;
+  }
+
   // Moves the individual and bounces them back inside the simulation bounds.
   move(width, height, speedMultiplier = 1, radius = 0) {
+    if (this.isDead()) {
+      return;
+    }
+
     this.x += this.vx * speedMultiplier;
     this.y += this.vy * speedMultiplier;
 
@@ -84,8 +98,6 @@ export class Individual {
       this.vy *= -1;
       this.y = Math.min(Math.max(this.y, minY), maxY);
     }
-
-    // TODO: Increment infectionTime during logical ticks once updateSimulation is added.
   }
 
   // Converts the class instance to plain data for React, tests, or chart history.
