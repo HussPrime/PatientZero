@@ -69,7 +69,7 @@ export function SetupPanel({
           <RangeField
             label="Vitesse de déplacement"
             max={5}
-            min={1}
+            min={0}
             disabled={disabled}
             onChange={(value) => onChange("movementSpeed", value)}
             suffix="x"

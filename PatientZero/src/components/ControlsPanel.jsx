@@ -1,7 +1,7 @@
 // Purpose: Provides the controls used to pause, stop, reset, and tune simulation speed.
 import { IconBolt, IconPause, IconPlay, IconReset, IconStop } from "./Icons";
 
-const SPEED_OPTIONS = [1, 2, 3, 4, 5];
+const SPEED_OPTIONS = [0.5, 1, 2, 3, 5];
 const FINISHED_STATUS = "Simulation terminée";
 const STOPPED_STATUS = "Simulation arrêtée";
 
@@ -9,8 +9,6 @@ const STOPPED_STATUS = "Simulation arrêtée";
 export function ControlsPanel({
   status,
   speed,
-  stats,
-  timeSeconds,
   onSpeedChange,
   onToggleRun,
   onStop,
@@ -36,8 +34,6 @@ export function ControlsPanel({
       : isFinished || isStopped
         ? "button button--success"
         : "button button--success";
-  const recoveredPercent = stats?.total > 0 ? Math.round((stats.recovered / stats.total) * 100) : 0;
-  const finishedTime = Math.floor(timeSeconds);
 
   return (
     <section className="panel controls-panel">

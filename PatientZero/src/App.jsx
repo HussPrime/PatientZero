@@ -20,7 +20,7 @@ const INITIAL_PARAMETERS = {
   movementSpeed: DEFAULT_SETTINGS.movementSpeed,
   transmissionRate: DEFAULT_SETTINGS.transmissionRate,
   infectionRadius: DEFAULT_SETTINGS.infectionRadius,
-  simulationSpeed: 1,
+  simulationSpeed: DEFAULT_SETTINGS.simulationSpeed,
 };
 
 const POPULATION_PREVIEW_FIELDS = new Set(["populationSize", "initialInfected", "movementSpeed"]);

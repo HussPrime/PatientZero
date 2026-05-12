@@ -1,4 +1,5 @@
 // Purpose: Displays the live counts for each simulation state.
+import { highlightElement } from "../utils/sectionNavigation";
 import { IconDot, IconShield, IconUsers } from "./Icons";
 
 const STAT_CARDS = [
@@ -7,6 +8,12 @@ const STAT_CARDS = [
   { key: "infected", label: "Infectés", color: "infected", icon: IconDot },
   { key: "recovered", label: "Guéris", color: "recovered", icon: IconShield },
 ];
+
+// Highlights only the statistic card selected by the user.
+const handleStatCardClick = (event) => {
+  event.stopPropagation();
+  highlightElement(event.currentTarget);
+};
 
 // Renders statistic cards from the latest population counters.
 export function StatsPanel({ stats }) {
@@ -18,7 +25,7 @@ export function StatsPanel({ stats }) {
 
         // TODO: Guard against total = 0 if user validation later allows an empty population.
         return (
-          <article className={`stat-card stat-card--${card.color}`} key={card.key}>
+          <article className={`stat-card stat-card--${card.color}`} key={card.key} onClick={handleStatCardClick}>
             <div className="stat-card__label">
               <card.icon size={14} />
               {card.label}

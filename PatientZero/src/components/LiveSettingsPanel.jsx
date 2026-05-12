@@ -47,7 +47,7 @@ export function LiveSettingsPanel({ values, onChange }) {
         <RangeField
           label="Vitesse de déplacement"
           max={5}
-          min={1}
+          min={0}
           onChange={(value) => onChange("movementSpeed", value)}
           suffix="x"
           value={values.movementSpeed}
