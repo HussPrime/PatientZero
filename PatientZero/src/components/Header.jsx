@@ -35,6 +35,7 @@ export function Header({ status, simulationTimeSeconds = 0 }) {
       </div>
 
       <div className="main-nav-shell">
+        <span className="main-nav__scroll-arrow main-nav__scroll-arrow--left" aria-hidden="true">‹</span>
         <nav className="main-nav" aria-label="Navigation principale">
           {NAVIGATION_ITEMS.map((item) => (
             <a
@@ -47,7 +48,7 @@ export function Header({ status, simulationTimeSeconds = 0 }) {
             </a>
           ))}
         </nav>
-        <span className="main-nav__scroll-hint">Faire défiler</span>
+        <span className="main-nav__scroll-arrow main-nav__scroll-arrow--right" aria-hidden="true">›</span>
       </div>
 
       <div className="header-metrics">

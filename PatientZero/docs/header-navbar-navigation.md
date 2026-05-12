@@ -226,7 +226,12 @@ La navbar mobile reste horizontalement scrollable.
 Pour rendre ce scroll explicite :
 
 - une scrollbar visible est affichée ;
-- le texte `Faire défiler` apparaît sous la navbar.
+
+- deux petites flèches décoratives apparaissent a gauche et a droite de la navbar.
+
+Ces flèches sont présentes dans `Header.jsx` avec `aria-hidden="true"`, car elles servent uniquement d'indication visuelle. Elles ne sont pas des boutons et ne doivent pas être annoncées comme des actions par les lecteurs d'écran.
+
+En CSS, elles sont cachées par défaut et affichées seulement dans le breakpoint mobile/tablette où la navbar devient scrollable horizontalement.
 
 ## Problèmes rencontrés et résolutions
 
