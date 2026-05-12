@@ -129,15 +129,18 @@
 }
 
 .dashboard__visuals {
+  --visual-panel-body-height: 520px;
+  --visual-chart-frame-height: calc(var(--visual-panel-body-height) + 24px);
   display: grid;
   grid-template-columns: minmax(520px, 1.45fr) minmax(320px, 0.9fr);
   gap: 16px;
-  align-items: stretch;
+  align-items: start;
   min-width: 0;
 }
 
 .dashboard__visuals > div {
   display: flex;
+  align-items: stretch;
   min-width: 0;
 }
 
@@ -384,6 +387,10 @@
   .setup-grid {
     grid-template-columns: 1fr;
   }
+
+  .dashboard__visuals {
+    --visual-panel-body-height: 420px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -452,6 +459,10 @@
   .dashboard__main {
     display: flex;
     flex-direction: column;
+  }
+
+  .dashboard__visuals {
+    --visual-panel-body-height: 340px;
   }
 
   .dashboard__sidebar {
