@@ -3,6 +3,7 @@ const LEGEND_ITEMS = [
   { label: "Sain", state: "healthy" },
   { label: "Infecté", state: "infected" },
   { label: "Guéri", state: "recovered" },
+  { label: "Mort", state: "dead" }
 ];
 
 // Renders the state legend in normal or compact mode.

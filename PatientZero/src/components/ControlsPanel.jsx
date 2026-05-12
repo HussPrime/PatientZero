@@ -25,7 +25,7 @@ export function ControlsPanel({
     : isPaused
       ? "Reprendre"
       : isFinished || isStopped
-        ? isStopped ? "Arrêté" : "Terminé"
+        ? "Relancer"
         : "Démarrer";
   const mainActionClass = isRunning
     ? "button button--warning"
@@ -50,7 +50,7 @@ export function ControlsPanel({
       </div>
 
       <div className="control-actions">
-        <button className={mainActionClass} disabled={isFinished || isStopped} onClick={onToggleRun} type="button">
+        <button className={mainActionClass} onClick={onToggleRun} type="button">
           {isRunning ? <IconPause size={12} /> : <IconPlay size={12} />}
           {mainActionLabel}
         </button>

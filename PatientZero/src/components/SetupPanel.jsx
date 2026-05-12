@@ -13,6 +13,9 @@ export function SetupPanel({
   onStart,
 }) {
   // TODO: Display validation messages here when impossible parameter combinations are rejected.
+  
+  const initialInfectedMax = Math.min(values.populationSize, 100);
+  const initialInfectedValue = Math.min(values.initialInfected, initialInfectedMax);
   const panelClassName = [
     "panel",
     "setup-panel",
@@ -50,7 +53,7 @@ export function SetupPanel({
           <h3>Population</h3>
           <RangeField
             label="Taille de la population"
-            max={800}
+            max={10000}
             min={50}
             disabled={disabled}
             onChange={(value) => onChange("populationSize", value)}
@@ -60,11 +63,11 @@ export function SetupPanel({
           />
           <RangeField
             label="Patients zéro"
-            max={20}
+            max={initialInfectedMax}
             min={1}
             disabled={disabled}
-            onChange={(value) => onChange("initialInfected", value)}
-            value={values.initialInfected}
+            onChange={(value) => onChange("initialInfected", Math.min(value, values.populationSize))}
+            value={initialInfectedValue}
           />
           <RangeField
             label="Vitesse de déplacement"
@@ -96,6 +99,15 @@ export function SetupPanel({
             onChange={(value) => onChange("infectionDuration", value)}
             suffix=" s"
             value={values.infectionDuration}
+          />
+          <RangeField
+            label="Taux de guérison"
+            max={100}
+            min={0}
+            disabled={disabled}
+            onChange={(value) => onChange("cureRate", value)}
+            suffix=" %"
+            value={values.cureRate}
           />
           <RangeField
             label="Rayon d'infection"

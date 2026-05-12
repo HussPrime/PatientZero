@@ -2,6 +2,7 @@
 import {
   calculateDistance,
   isWithinInfectionRadius,
+  shouldDie,
   shouldInfect,
   shouldRecover,
 } from "./infectionRules";
@@ -14,6 +15,7 @@ const DEFAULT_UPDATE_SETTINGS = {
   referenceContactDuration: 1,
   simulationSpeed: 1,
   transmissionRate: 0,
+  cureRate: 100,
 };
 
 // Converts real elapsed time and selected speed into simulated seconds.
@@ -56,6 +58,11 @@ export function updateSimulation(individuals, settings = {}, rng = Math.random) 
     individual.infectionTime = (individual.infectionTime ?? 0) + timeStepSeconds;
 
     if (shouldRecover(individual, nextSettings.infectionDuration)) {
+      if (shouldDie({ cureRate: nextSettings.cureRate }, rng)) {
+        individual.die();
+        return;
+      }
+
       individual.recover();
     }
   });

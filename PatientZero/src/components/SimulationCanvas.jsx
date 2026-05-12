@@ -1,7 +1,7 @@
 // Purpose: Placeholder for the p5.js canvas that will render the moving population.
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import P5 from "p5";
-import { IconChip, IconReset } from "./Icons";
+import { IconChip, IconClose, IconReset } from "./Icons";
 import { Legend } from "./Legend";
 import { INDIVIDUAL_STATES } from "../constants/simulationStates";
 import { getSimulationTimeStepSeconds, updateSimulation } from "../simulation/updateSimulation";
@@ -17,6 +17,13 @@ const STATE_COLORS = {
   [INDIVIDUAL_STATES.HEALTHY]: "#43a047",
   [INDIVIDUAL_STATES.INFECTED]: "#e53935",
   [INDIVIDUAL_STATES.RECOVERED]: "#1e88e5",
+  [INDIVIDUAL_STATES.DEAD]: "#334155",
+};
+
+const RESULT_BAR_COLORS = {
+  infected: "#e53935",
+  recovered: "#1e88e5",
+  dead: "#020617",
 };
 
 // Reads the visible container size used by the responsive p5.js canvas.
@@ -49,6 +56,44 @@ const drawIndividual = (p, individual, infectionRadius) => {
   p.circle(x, y, radius * 2);
 };
 
+// Builds one continuous gradient where each state color is positioned from its final share.
+const createResultBarGradient = ({ infected = 0, recovered = 0, dead = 0 }) => {
+  const total = infected + recovered + dead;
+  const segments = [
+    { count: infected, color: RESULT_BAR_COLORS.infected },
+    { count: recovered, color: RESULT_BAR_COLORS.recovered },
+    { count: dead, color: RESULT_BAR_COLORS.dead },
+  ].filter((segment) => segment.count > 0);
+
+  if (segments.length === 0) {
+    return "transparent";
+  }
+
+  if (segments.length === 1) {
+    return segments[0].color;
+  }
+
+  let cumulative = 0;
+  const colorStops = segments.flatMap((segment, index) => {
+    const start = (cumulative / total) * 100;
+    const middle = ((cumulative + (segment.count / 2)) / total) * 100;
+
+    cumulative += segment.count;
+
+    if (index === 0) {
+      return [`${segment.color} 0%`, `${segment.color} ${middle}%`];
+    }
+
+    if (index === segments.length - 1) {
+      return [`${segment.color} ${middle}%`, `${segment.color} 100%`];
+    }
+
+    return [`${segment.color} ${middle}%`, `${segment.color} ${start + ((cumulative / total) * 100 - start) / 2}%`];
+  });
+
+  return `linear-gradient(90deg, ${colorStops.join(", ")})`;
+};
+
 // Renders the p5.js simulation panel and applies the current run speed.
 export function SimulationCanvas({
   endReason = "completed",
@@ -65,6 +110,7 @@ export function SimulationCanvas({
   onToggleRun,
 }) {
   const containerRef = useRef(null);
+  const [dismissedResultKey, setDismissedResultKey] = useState(null);
   const dataRef = useRef({
     individuals,
     infectionRadius,
@@ -168,9 +214,7 @@ export function SimulationCanvas({
 
   // Toggles play/pause when the user activates the simulation area.
   const handleCanvasClick = () => {
-    if (!isFinished) {
-      onToggleRun();
-    }
+    onToggleRun();
   };
 
   // Toggles play/pause from the keyboard while the simulation is not ended.
@@ -181,10 +225,24 @@ export function SimulationCanvas({
     }
   };
 
-  const affectedCount = (stats?.recovered ?? 0) + (stats?.infected ?? 0);
+  const affectedCount = (stats?.recovered ?? 0) + (stats?.infected ?? 0) + (stats?.dead ?? 0);
   const affectedPercent = stats?.total > 0 ? Math.round((affectedCount / stats.total) * 100) : 0;
+  const resultBarGradient = createResultBarGradient({
+    infected: stats?.infected ?? 0,
+    recovered: stats?.recovered ?? 0,
+    dead: stats?.dead ?? 0,
+  });
   const finalTime = Math.floor(timeSeconds);
   const isStopped = endReason === "stopped";
+  const resultKey = [
+    endReason,
+    finalTime,
+    stats?.healthy ?? 0,
+    stats?.infected ?? 0,
+    stats?.recovered ?? 0,
+    stats?.dead ?? 0,
+  ].join(":");
+  const shouldShowResult = isFinished && dismissedResultKey !== resultKey;
 
   return (
     <section className="panel simulation-panel">
@@ -212,8 +270,22 @@ export function SimulationCanvas({
       >
         {individuals.length === 0 ? <div className="simulation-empty-state">Population non générée</div> : null}
         <Legend />
-        {isFinished ? (
-          <div className={`simulation-result ${isStopped ? "is-stopped" : "is-complete"}`}>
+        {shouldShowResult ? (
+          <div
+            className={`simulation-result ${isStopped ? "is-stopped" : "is-complete"}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              aria-label="Fermer le résumé de fin"
+              className="simulation-result__close"
+              onClick={(event) => {
+                event.stopPropagation();
+                setDismissedResultKey(resultKey);
+              }}
+              type="button"
+            >
+              <IconClose size={15} />
+            </button>
             <span className="simulation-result__eyebrow">{isStopped ? "Simulation arrêtée" : "Simulation terminée"}</span>
             <strong>{isStopped ? "Simulation stoppée manuellement" : "Plus aucun individu infecté"}</strong>
             <p>
@@ -229,6 +301,10 @@ export function SimulationCanvas({
                 Guéris
               </span>
               <span>
+                <strong>{stats.dead ?? 0}</strong>
+                Morts
+              </span>
+              <span>
                 <strong>{stats.infected}</strong>
                 Infectés
               </span>
@@ -239,10 +315,13 @@ export function SimulationCanvas({
             </div>
             <div
               className="simulation-result__bar"
-              aria-label={`${affectedPercent} % de la population a été touchée`}
+              aria-label={`${affectedPercent} % de la population touchée: ${stats.infected} infectés, ${stats.recovered} guéris, ${stats.dead ?? 0} morts`}
               style={{ "--affected-percent": `${affectedPercent}%` }}
             >
-              <span />
+              <span
+                className="simulation-result__bar-fill"
+                style={{ background: resultBarGradient }}
+              />
             </div>
             <button
                 className="button button--primary"

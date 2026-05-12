@@ -21,6 +21,7 @@ const INITIAL_PARAMETERS = {
   transmissionRate: DEFAULT_SETTINGS.transmissionRate,
   infectionRadius: DEFAULT_SETTINGS.infectionRadius,
   simulationSpeed: DEFAULT_SETTINGS.simulationSpeed,
+  cureRate: DEFAULT_SETTINGS.cureRate
 };
 
 const POPULATION_PREVIEW_FIELDS = new Set(["populationSize", "initialInfected", "movementSpeed"]);
@@ -101,6 +102,14 @@ function App() {
   const updateParameter = (name, value) => {
     const nextParameters = { ...parameters, [name]: value };
 
+    if (name === "populationSize") {
+      nextParameters.initialInfected = Math.min(nextParameters.initialInfected, value);
+    }
+
+    if (name === "initialInfected") {
+      nextParameters.initialInfected = Math.min(value, nextParameters.populationSize);
+    }
+
     setParameters(nextParameters);
 
     if (isSimulationEnded) {
@@ -140,6 +149,23 @@ function App() {
     clearSimulationSession();
   };
 
+  // Creates a clean session and starts it immediately after a stopped or finished run.
+  const restartSimulation = () => {
+    const nextPopulation = createPopulationFromParameters(parameters);
+    const nextStats = nextPopulation.getStats();
+
+    simulationTimeRef.current = 0;
+    frameCountRef.current = 0;
+    setSimulationTimeSeconds(0);
+    setPopulation(nextPopulation);
+    setStatus("Simulation en cours");
+    setChartHistory([
+      createChartHistoryPoint(0, nextStats),
+      createChartHistoryPoint(1, nextStats),
+    ]);
+    scrollToSimulationPanel();
+  };
+
   // Refreshes React state after p5.js has applied one simulation frame.
   const handleSimulationFrame = (timeStepSeconds = 0) => {
     const nextTimeSeconds = simulationTimeRef.current + timeStepSeconds;
@@ -172,6 +198,11 @@ function App() {
 
   // Starts the first version of the simulation flow.
   const startSimulation = () => {
+    if (isSimulationEnded) {
+      restartSimulation();
+      return;
+    }
+
     setStatus("Simulation en cours");
     setChartHistory((currentHistory) => (
       currentHistory.length === 0
@@ -216,7 +247,7 @@ function App() {
           timeSeconds={simulationTimeSeconds}
           onSimulationFrame={handleSimulationFrame}
           onToggleRun={toggleSimulation}
-          onReplay={replaySimulation}
+          onReplay={restartSimulation}
         />
       }
       chart={

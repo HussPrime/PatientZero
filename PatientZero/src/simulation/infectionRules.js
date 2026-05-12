@@ -66,9 +66,27 @@ export function calculateInfectionProbability({
   return clamp(probability, 0, 1);
 }
 
+// Converts the cure rate selected by the user into the complementary death probability.
+export function calculateDeathProbability({ cureRate }) {
+  assertNonNegativeNumber(cureRate, "cureRate");
+
+  if (cureRate > 100) {
+    throw new Error("cureRate must be between 0 and 100.");
+  }
+
+  return 1 - (cureRate / 100);
+}
+
 // Decides whether an infected individual transmits the disease during this tick.
 export function shouldInfect(infectionContext, rng = Math.random) {
   const probability = calculateInfectionProbability(infectionContext);
+
+  return rng() < probability;
+}
+
+// Decides whether an infected individual dies when their infection duration ends.
+export function shouldDie(deathContext, rng = Math.random) {
+  const probability = calculateDeathProbability(deathContext);
 
   return rng() < probability;
 }

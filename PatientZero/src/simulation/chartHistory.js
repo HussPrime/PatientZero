@@ -7,6 +7,7 @@ export function createChartHistoryPoint(timeSeconds, stats) {
     healthy: stats.healthy,
     infected: stats.infected,
     recovered: stats.recovered,
+    dead: stats.dead ?? 0,
   };
 }
 

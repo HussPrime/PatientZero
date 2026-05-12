@@ -37,6 +37,14 @@ export function LiveSettingsPanel({ values, onChange }) {
           value={values.infectionDuration}
         />
         <RangeField
+          label="Taux de guérison"
+          max={100}
+          min={0}
+          onChange={(value) => onChange("cureRate", value)}
+          suffix=" %"
+          value={values.cureRate}
+        />
+        <RangeField
           label="Rayon d'infection"
           max={40}
           min={4}

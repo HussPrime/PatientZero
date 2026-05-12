@@ -130,4 +130,30 @@ describe("updateSimulation", () => {
 
     expect(infectedIndividual.infectionTime).toBeCloseTo(5 / 30);
   });
+
+  it("kills infected individuals at the end of the duration when cure rate is zero", () => {
+    const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
+    infectedIndividual.infect();
+    infectedIndividual.infectionTime = 3.99;
+
+    updateSimulation([infectedIndividual], createUpdateSettings({
+      cureRate: 0,
+      transmissionRate: 0,
+    }), () => 0.99);
+
+    expect(infectedIndividual.state).toBe(INDIVIDUAL_STATES.DEAD);
+  });
+
+  it("recovers infected individuals at the end of the duration when cure rate is complete", () => {
+    const infectedIndividual = new Individual({ id: 1, x: 0, y: 0 });
+    infectedIndividual.infect();
+    infectedIndividual.infectionTime = 3.99;
+
+    updateSimulation([infectedIndividual], createUpdateSettings({
+      cureRate: 100,
+      transmissionRate: 0,
+    }), () => 0);
+
+    expect(infectedIndividual.state).toBe(INDIVIDUAL_STATES.RECOVERED);
+  });
 });

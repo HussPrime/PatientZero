@@ -140,11 +140,13 @@ export class Population {
           stats.infected += 1;
         } else if (individual.state === INDIVIDUAL_STATES.RECOVERED) {
           stats.recovered += 1;
+        } else if (individual.state === INDIVIDUAL_STATES.DEAD) {
+          stats.dead += 1;
         }
 
         return stats;
       },
-      { healthy: 0, infected: 0, recovered: 0, total: this.getTotal() },
+      { healthy: 0, infected: 0, recovered: 0, dead: 0, total: this.getTotal() },
     );
   }
 
