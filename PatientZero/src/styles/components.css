@@ -412,7 +412,7 @@
 .simulation-canvas {
   position: relative;
   flex: 1 1 auto;
-  min-height: var(--visual-panel-body-height, 520px);
+  min-height: var(--simulation-canvas-height, var(--visual-panel-body-height, 520px));
   margin: 12px;
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.14);
@@ -1228,6 +1228,11 @@
 @media (max-width: 768px) {
   .setup-grid {
     grid-template-columns: 1fr;
+  }
+
+  .simulation-canvas {
+    height: var(--simulation-canvas-height);
+    min-height: var(--simulation-canvas-height);
   }
 
   .simulation-result__metrics {

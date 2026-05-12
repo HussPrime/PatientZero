@@ -390,6 +390,7 @@
 
   .dashboard__visuals {
     --visual-panel-body-height: 420px;
+    --simulation-canvas-height: min(72svh, 680px);
   }
 }
 
@@ -463,6 +464,7 @@
 
   .dashboard__visuals {
     --visual-panel-body-height: 340px;
+    --simulation-canvas-height: min(72svh, 620px);
   }
 
   .dashboard__sidebar {
