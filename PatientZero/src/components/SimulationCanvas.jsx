@@ -195,10 +195,10 @@ export function SimulationCanvas({
           </span>
           <div>
             <h2>Zone de simulation</h2>
-            <p>Canvas prêt pour le rendu p5.js</p>
+            <p>Population en mouvement, propagation en temps réel</p>
           </div>
         </div>
-        <span className="panel__badge">Responsive</span>
+        <span className="panel__badge">Interactif</span>
       </div>
 
       <div

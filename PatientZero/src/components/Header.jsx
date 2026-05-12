@@ -29,7 +29,7 @@ export function Header({ status, simulationTimeSeconds = 0 }) {
         <span>{status}</span>
       </div>
 
-      <div className="tick-counter">t = {formattedTime}</div>
+      <div className="tick-counter">Temps écoulé = {formattedTime}</div>
     </header>
   );
 }
