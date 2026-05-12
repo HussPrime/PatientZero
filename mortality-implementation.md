@@ -14,6 +14,10 @@
 - Amélioration de l'écran de fin: métriques alignées sur une grille plus large et ajout d'une croix pour masquer le résumé.
 - Ajustement de l'état `Stop`: le bouton principal peut relancer directement une nouvelle simulation après un arrêt manuel.
 - Alignement du clic sur la zone p5.js: après un arrêt ou une fin de simulation, cliquer le canvas relance aussi une nouvelle session.
+- Remplacement des pastilles génériques dans les statistiques par des icônes distinctes pour les états sain, infecté et mort.
+- Renforcement du survol des cartes de statistiques avec des effets néon propres à chaque catégorie.
+- Ajustement de l'effet néon des statistiques: retrait du glow sur le texte et accent mis autour de la barre de pourcentage.
+- Retrait du glow autour des libellés de statistiques afin que l'effet lumineux reste concentré sur les cartes et les barres.
 
 ## Problèmes rencontrés
 

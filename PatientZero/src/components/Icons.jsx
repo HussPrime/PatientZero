@@ -75,6 +75,24 @@ export function IconDot(props) {
   );
 }
 
+// Renders a heart icon for healthy individuals.
+export function IconHeart(props) {
+  return (
+    <Icon {...props}>
+      <path d="M20.4 5.6a5 5 0 0 0-7.1 0L12 6.9l-1.3-1.3a5 5 0 0 0-7.1 7.1L12 21l8.4-8.3a5 5 0 0 0 0-7.1Z" />
+    </Icon>
+  );
+}
+
+// Renders a medical cross icon for currently infected individuals.
+export function IconMedicalCross(props) {
+  return (
+    <Icon {...props}>
+      <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" />
+    </Icon>
+  );
+}
+
 // Renders a play icon for the start action.
 export function IconPlay(props) {
   return (
@@ -128,6 +146,18 @@ export function IconStop(props) {
   return (
     <Icon fill="currentColor" {...props}>
       <path d="M6 6h12v12H6z" stroke="none" />
+    </Icon>
+  );
+}
+
+// Renders a grave marker icon for dead individuals.
+export function IconTombstone(props) {
+  return (
+    <Icon {...props}>
+      <path d="M6 21h12" />
+      <path d="M8 21V9a4 4 0 0 1 8 0v12" />
+      <path d="M10 11h4" />
+      <path d="M12 9v5" />
     </Icon>
   );
 }

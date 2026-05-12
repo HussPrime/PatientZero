@@ -1,13 +1,13 @@
 // Purpose: Displays the live counts for each simulation state.
 import { highlightElement } from "../utils/sectionNavigation";
-import { IconDot, IconShield, IconUsers } from "./Icons";
+import { IconHeart, IconMedicalCross, IconShield, IconTombstone, IconUsers } from "./Icons";
 
 const STAT_CARDS = [
   { key: "total", label: "Population", color: "neutral", icon: IconUsers },
-  { key: "healthy", label: "Sains", color: "healthy", icon: IconDot },
-  { key: "infected", label: "Infectés", color: "infected", icon: IconDot },
+  { key: "healthy", label: "Sains", color: "healthy", icon: IconHeart },
+  { key: "infected", label: "Infectés", color: "infected", icon: IconMedicalCross },
   { key: "recovered", label: "Guéris", color: "recovered", icon: IconShield },
-  { key: "dead", label: "Morts", color: "dead", icon: IconDot },
+  { key: "dead", label: "Morts", color: "dead", icon: IconTombstone },
 ];
 
 // Highlights only the statistic card selected by the user.
