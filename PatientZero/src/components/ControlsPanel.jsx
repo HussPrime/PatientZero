@@ -9,8 +9,6 @@ const STOPPED_STATUS = "Simulation arrêtée";
 export function ControlsPanel({
   status,
   speed,
-  stats,
-  timeSeconds,
   onSpeedChange,
   onToggleRun,
   onStop,
@@ -36,8 +34,6 @@ export function ControlsPanel({
       : isFinished || isStopped
         ? "button button--success"
         : "button button--success";
-  const recoveredPercent = stats?.total > 0 ? Math.round((stats.recovered / stats.total) * 100) : 0;
-  const finishedTime = Math.floor(timeSeconds);
 
   return (
     <section className="panel controls-panel">

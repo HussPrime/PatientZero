@@ -1,6 +1,15 @@
 // Purpose: Displays the app identity, current run status, and simulated time.
 import { formatChartTimeAsSeconds } from "../simulation/chartHistory";
 
+const NAVIGATION_ITEMS = [
+  { href: "#stats", label: "Statistiques" },
+  { href: "#simulation", label: "Simulation" },
+  { href: "#chart", label: "Graphique" },
+  { href: "#controls", label: "Contrôles" },
+  { href: "#live-settings", label: "Direct" },
+  { href: "#setup", label: "Paramètres" },
+];
+
 // Renders the top header with status-dependent visual feedback.
 export function Header({ status, simulationTimeSeconds = 0 }) {
   const isRunning = status === "Simulation en cours";
@@ -18,18 +27,31 @@ export function Header({ status, simulationTimeSeconds = 0 }) {
         </div>
       </div>
 
-      <div className="header-status">
-        <span
-          className={[
-            "header-status__dot",
-            isRunning ? "header-status__dot--running" : "",
-            isPaused ? "header-status__dot--paused" : "",
-          ].join(" ")}
-        />
-        <span>{status}</span>
+      <div className="main-nav-shell">
+        <nav className="main-nav" aria-label="Navigation principale">
+          {NAVIGATION_ITEMS.map((item) => (
+            <a className="main-nav__link" href={item.href} key={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        <span className="main-nav__scroll-hint">Faire défiler</span>
       </div>
 
-      <div className="tick-counter">Temps écoulé = {formattedTime}</div>
+      <div className="header-metrics">
+        <div className="header-status">
+          <span
+            className={[
+              "header-status__dot",
+              isRunning ? "header-status__dot--running" : "",
+              isPaused ? "header-status__dot--paused" : "",
+            ].join(" ")}
+          />
+          <span>{status}</span>
+        </div>
+
+        <div className="tick-counter">Temps écoulé = {formattedTime}</div>
+      </div>
     </header>
   );
 }
