@@ -1,5 +1,6 @@
 // Purpose: Displays the app identity, current run status, and simulated time.
 import { formatChartTimeAsSeconds } from "../simulation/chartHistory";
+import { centerAndHighlightSection } from "../utils/sectionNavigation";
 
 const NAVIGATION_ITEMS = [
   { href: "#stats", label: "Statistiques" },
@@ -10,21 +11,10 @@ const NAVIGATION_ITEMS = [
   { href: "#setup", label: "Paramètres" },
 ];
 
-// Scrolls a dashboard section into the center of the viewport.
-const scrollToCenteredSection = (event, href) => {
-  const targetId = href.replace("#", "");
-  const target = document.getElementById(targetId);
-
-  if (!target) {
-    return;
-  }
-
+// Handles header navigation without losing the temporary section highlight.
+const handleNavigationClick = (event, href) => {
   event.preventDefault();
-  window.history.pushState(null, "", href);
-  target.scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-  });
+  centerAndHighlightSection(href.replace("#", ""));
 };
 
 // Renders the top header with status-dependent visual feedback.
@@ -51,7 +41,7 @@ export function Header({ status, simulationTimeSeconds = 0 }) {
               className="main-nav__link"
               href={item.href}
               key={item.href}
-              onClick={(event) => scrollToCenteredSection(event, item.href)}
+              onClick={(event) => handleNavigationClick(event, item.href)}
             >
               {item.label}
             </a>

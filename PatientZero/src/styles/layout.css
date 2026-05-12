@@ -158,44 +158,45 @@
   scroll-margin-top: 94px;
 }
 
-#stats:target,
-#simulation:target,
-#chart:target,
-#setup:target,
-#controls:target,
-#live-settings:target {
+#stats.is-section-highlighted,
+#simulation.is-section-highlighted,
+#chart.is-section-highlighted,
+#setup.is-section-highlighted,
+#controls.is-section-highlighted,
+#live-settings.is-section-highlighted {
   animation: section-target 2200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-#simulation:target .panel,
-#chart:target .panel,
-#setup:target .panel,
-#controls:target .panel,
-#live-settings:target .panel {
+#simulation.is-section-highlighted .panel,
+#chart.is-section-highlighted .panel,
+#setup.is-section-highlighted .panel,
+#controls.is-section-highlighted .panel,
+#live-settings.is-section-highlighted .panel {
   animation: panel-target-highlight 1800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-#simulation:target .panel-title__icon {
+#simulation.is-section-highlighted .panel-title__icon {
   animation: panel-icon-target-blue 1800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-#chart:target .panel-title__icon {
+#chart.is-section-highlighted .panel-title__icon {
   animation: panel-icon-target-green 1800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-#setup:target .panel-title__icon {
+#setup.is-section-highlighted .panel-title__icon {
   animation: panel-icon-target-danger 1800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-#controls:target .panel-title__icon {
+#controls.is-section-highlighted .panel-title__icon {
   animation: panel-icon-target-yellow 1800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-#live-settings:target .panel-title__icon {
+#live-settings.is-section-highlighted .panel-title__icon {
   animation: panel-icon-target-blue 1800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-#stats:target .stat-card {
+#stats.is-section-highlighted .stat-card,
+.stat-card.is-section-highlighted {
   animation: stat-card-target-highlight 1800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 

@@ -1,4 +1,6 @@
 // Purpose: Defines the main dashboard regions without owning simulation logic.
+import { centerAndHighlightSection } from "../utils/sectionNavigation";
+
 const INTERACTIVE_SECTION_TARGETS = [
   "a",
   "button",
@@ -17,17 +19,7 @@ const handleSectionSurfaceClick = (sectionId) => (event) => {
     return;
   }
 
-  const target = document.getElementById(sectionId);
-
-  if (!target) {
-    return;
-  }
-
-  window.history.pushState(null, "", `#${sectionId}`);
-  target.scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-  });
+  centerAndHighlightSection(sectionId);
 };
 
 // Renders the page layout from slots provided by App.
