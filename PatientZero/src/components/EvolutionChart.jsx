@@ -328,11 +328,13 @@ export function EvolutionChart({
             <IconActivity size={15} />
           </span>
           <div>
-            <h2>Évolution dans le temps</h2>
+            <div className="chart-panel__title-row">
+              <h2>Évolution dans le temps</h2>
+              <Legend compact />
+            </div>
             <p>{hasData ? `${data.length} points enregistrés` : "En attente des données de simulation"}</p>
           </div>
         </div>
-        <Legend compact />
       </div>
       <div className="chart-frame">
         <canvas ref={canvasRef} aria-label="Graphique d'évolution des états de la population" />
