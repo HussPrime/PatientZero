@@ -101,6 +101,14 @@ function App() {
   const updateParameter = (name, value) => {
     const nextParameters = { ...parameters, [name]: value };
 
+    if (name === "populationSize") {
+      nextParameters.initialInfected = Math.min(nextParameters.initialInfected, value);
+    }
+
+    if (name === "initialInfected") {
+      nextParameters.initialInfected = Math.min(value, nextParameters.populationSize);
+    }
+
     setParameters(nextParameters);
 
     if (isSimulationEnded) {
