@@ -51,7 +51,7 @@ export function SetupPanel({
           <h3>Population</h3>
           <RangeField
             label="Taille de la population"
-            max={10000}
+            max={5000}
             min={50}
             disabled={disabled}
             onChange={(value) => onChange("populationSize", value)}
