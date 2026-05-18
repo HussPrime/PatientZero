@@ -14,7 +14,7 @@ export function LiveSettingsPanel({ values, onChange }) {
           </span>
           <div>
             <h2>Paramètres en direct</h2>
-            <p>Réglages prêts à connecter</p>
+            <p>Réglages en temps réel</p>
           </div>
         </div>
       </div>

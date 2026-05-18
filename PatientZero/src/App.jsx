@@ -247,7 +247,7 @@ function App() {
           timeSeconds={simulationTimeSeconds}
           onSimulationFrame={handleSimulationFrame}
           onToggleRun={toggleSimulation}
-          onReplay={restartSimulation}
+          onReplay={replaySimulation}
         />
       }
       chart={

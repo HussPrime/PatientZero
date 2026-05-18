@@ -14,7 +14,7 @@ export function SetupPanel({
 }) {
   // TODO: Display validation messages here when impossible parameter combinations are rejected.
   
-  const initialInfectedMax = Math.min(values.populationSize, 100);
+  const initialInfectedMax = Math.min(values.populationSize - 1, 100);
   const initialInfectedValue = Math.min(values.initialInfected, initialInfectedMax);
   const panelClassName = [
     "panel",
@@ -122,7 +122,7 @@ export function SetupPanel({
       </div>
 
       <div className="setup-actions">
-        <span><IconShield size={13} /> Modèle SIR, données locales, simulation côté client.</span>
+        <span><IconShield size={13} /> Modèle SIR + morts.</span>
         <div>
           <button className="button button--ghost" onClick={onReset} type="button">
             Réinitialiser les paramètres
