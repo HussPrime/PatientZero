@@ -12,6 +12,13 @@ const CHART_COLORS = {
   dead: "#334155",
 };
 
+const CHART_SERIES = [
+  { key: "healthy", label: "Sains", backgroundColor: "rgba(67, 160, 71, 0.12)" },
+  { key: "infected", label: "Infectés", backgroundColor: "rgba(229, 57, 53, 0.12)" },
+  { key: "recovered", label: "Guéris", backgroundColor: "rgba(30, 136, 229, 0.12)" },
+  { key: "dead", label: "Morts", backgroundColor: "rgba(123, 134, 153, 0.12)" },
+];
+
 const HOVER_GUIDE_PLUGIN = {
   id: "hoverGuide",
   afterDraw(chart) {
@@ -39,69 +46,21 @@ const HOVER_GUIDE_PLUGIN = {
 const LIVE_EDGE_WIDTH_PIXELS = 28;
 
 // Converts history points into Chart.js datasets while keeping the styling centralized.
-const createChartDatasets = (data) => [
-  // TODO: Keep this dataset list aligned with INDIVIDUAL_STATES if new states are added.
-  {
-    label: "Sains",
-    data: data.map((item) => ({ x: item.timeSeconds, y: item.healthy })),
-    borderColor: CHART_COLORS.healthy,
-    backgroundColor: "rgba(67, 160, 71, 0.12)",
-    pointBackgroundColor: CHART_COLORS.healthy,
-    pointBorderColor: "#172033",
-    pointHoverBackgroundColor: CHART_COLORS.healthy,
-    pointHoverBorderColor: "#F5F5F5",
-    pointHoverBorderWidth: 3,
-    pointHoverRadius: 7,
-    pointHitRadius: 12,
-    pointRadius: 3,
-    tension: 0.35,
-  },
-  {
-    label: "Infectés",
-    data: data.map((item) => ({ x: item.timeSeconds, y: item.infected })),
-    borderColor: CHART_COLORS.infected,
-    backgroundColor: "rgba(229, 57, 53, 0.12)",
-    pointBackgroundColor: CHART_COLORS.infected,
-    pointBorderColor: "#172033",
-    pointHoverBackgroundColor: CHART_COLORS.infected,
-    pointHoverBorderColor: "#F5F5F5",
-    pointHoverBorderWidth: 3,
-    pointHoverRadius: 7,
-    pointHitRadius: 12,
-    pointRadius: 3,
-    tension: 0.35,
-  },
-  {
-    label: "Guéris",
-    data: data.map((item) => ({ x: item.timeSeconds, y: item.recovered })),
-    borderColor: CHART_COLORS.recovered,
-    backgroundColor: "rgba(30, 136, 229, 0.12)",
-    pointBackgroundColor: CHART_COLORS.recovered,
-    pointBorderColor: "#172033",
-    pointHoverBackgroundColor: CHART_COLORS.recovered,
-    pointHoverBorderColor: "#F5F5F5",
-    pointHoverBorderWidth: 3,
-    pointHoverRadius: 7,
-    pointHitRadius: 12,
-    pointRadius: 3,
-    tension: 0.35,
-  },
-  {
-    label: "Morts",
-    data: data.map((item) => ({ x: item.timeSeconds, y: item.dead ?? 0 })),
-    borderColor: CHART_COLORS.dead,
-    backgroundColor: "rgba(123, 134, 153, 0.12)",
-    pointBackgroundColor: CHART_COLORS.dead,
-    pointBorderColor: "#172033",
-    pointHoverBackgroundColor: CHART_COLORS.dead,
-    pointHoverBorderColor: "#F5F5F5",
-    pointHoverBorderWidth: 3,
-    pointHoverRadius: 7,
-    pointHitRadius: 12,
-    pointRadius: 3,
-    tension: 0.35,
-  },
-];
+const createChartDatasets = (data) => CHART_SERIES.map(({ key, label, backgroundColor }) => ({
+  label,
+  data: data.map((item) => ({ x: item.timeSeconds, y: item[key] ?? 0 })),
+  borderColor: CHART_COLORS[key],
+  backgroundColor,
+  pointBackgroundColor: CHART_COLORS[key],
+  pointBorderColor: "#172033",
+  pointHoverBackgroundColor: CHART_COLORS[key],
+  pointHoverBorderColor: "#F5F5F5",
+  pointHoverBorderWidth: 3,
+  pointHoverRadius: 7,
+  pointHitRadius: 12,
+  pointRadius: 3,
+  tension: 0.35,
+}));
 
 // Updates existing Chart.js dataset objects so hover state is not reset on each new second.
 const updateChartDatasets = (chart, data) => {
@@ -114,19 +73,9 @@ const updateChartDatasets = (chart, data) => {
 
 // Returns the live count matching one chart dataset label.
 const getLiveCountForDataset = (stats, label) => {
-  if (label === "Sains") {
-    return stats.healthy;
-  }
+  const series = CHART_SERIES.find((item) => item.label === label);
 
-  if (label === "Infectés") {
-    return stats.infected;
-  }
-
-  if (label === "Guéris") {
-    return stats.recovered;
-  }
-
-  return stats.dead ?? 0;
+  return series ? stats[series.key] ?? 0 : 0;
 };
 
 // Activates the latest recorded point so the tooltip can display live values there.

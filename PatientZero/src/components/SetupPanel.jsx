@@ -12,8 +12,6 @@ export function SetupPanel({
   onStop,
   onStart,
 }) {
-  // TODO: Display validation messages here when impossible parameter combinations are rejected.
-  
   const initialInfectedMax = Math.min(values.populationSize - 1, 100);
   const initialInfectedValue = Math.min(values.initialInfected, initialInfectedMax);
   const panelClassName = [

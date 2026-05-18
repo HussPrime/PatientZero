@@ -77,20 +77,6 @@ export function ControlsPanel({
           ))}
         </div>
       </div>
-
-      {/* <div className="session-summary">
-        <span>Session</span>
-        <strong>{status}</strong>
-        {isFinished || isStopped ? (
-          <small>
-            {isStopped ? "Simulation arrêtée" : "Épidémie terminée"} après {finishedTime}s.
-            {stats.recovered} guéris, {stats.healthy} sains, {stats.infected} infectés,
-            soit {recoveredPercent} % de la population passée par l'infection.
-          </small>
-        ) : (
-          <small>Modèle SIR, propagation locale selon la distance et les paramètres actifs.</small>
-        )}
-      </div> */}
     </section>
   );
 }

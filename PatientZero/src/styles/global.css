@@ -20,7 +20,6 @@ body {
   background: #0f172a;
 }
 
-/* TODO: Add global focus-visible styles here once the full control set is finalized. */
 button,
 input {
   font: inherit;
@@ -28,6 +27,13 @@ input {
 
 button {
   cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid #1e88e5;
+  outline-offset: 3px;
 }
 
 #root {

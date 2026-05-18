@@ -330,7 +330,6 @@
   }
 }
 
-/* TODO: Revisit these breakpoints after the p5.js canvas has fixed responsive sizing. */
 @media (max-width: 1240px) {
   body {
     min-width: 0;

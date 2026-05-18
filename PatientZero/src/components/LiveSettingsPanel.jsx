@@ -4,7 +4,6 @@ import { RangeField } from "./RangeField";
 
 // Renders runtime controls for epidemiological parameters.
 export function LiveSettingsPanel({ values, onChange }) {
-  // TODO: Disable or limit fields here if changing them mid-simulation would make the model incoherent.
   return (
     <section className="panel live-settings-panel">
       <div className="panel__header">
