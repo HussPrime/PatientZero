@@ -1,93 +1,449 @@
-# Patient Zero 
+# 🧬 Patient Zero
 
+<div align="center">
 
+**Simulation interactive d’épidémie en React**
 
-## Getting started
+Configure une population, lance une propagation, observe les individus en mouvement et suis l’évolution des états sanitaires en temps réel.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+<br />
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+![React](https://img.shields.io/badge/React-Interface-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-Build-646CFF?logo=vite&logoColor=white)
+![p5.js](https://img.shields.io/badge/p5.js-Canvas-ED225D)
+![Chart.js](https://img.shields.io/badge/Chart.js-Graphiques-FF6384)
+![Vitest](https://img.shields.io/badge/Vitest-Tests-6E9F18?logo=vitest&logoColor=white)
 
-## Add your files
+</div>
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+---
 
+## 📌 À propos
+
+**Patient Zero** est une application web pédagogique de simulation d’épidémie.
+
+Elle permet de visualiser la propagation d’une infection dans une population d’individus qui se déplacent dans une zone graphique.  
+Le projet a été conçu pour rester :
+
+- **clair** à comprendre ;
+- **testable** grâce à une logique métier séparée ;
+- **facilement documentable** dans un rapport de développement ou un TPI ;
+- **simple à maintenir**.
+
+> **Objectif principal :** proposer une simulation visuelle, compréhensible et configurable sans complexifier inutilement le code.
+
+---
+
+## 🧭 Sommaire
+
+- [Aperçu du projet](#-aperçu-du-projet)
+- [Fonctionnalités principales](#-fonctionnalités-principales)
+- [Technologies utilisées](#-technologies-utilisées)
+- [Installation](#-installation)
+- [Lancer le projet](#-lancer-le-projet)
+- [Commandes disponibles](#-commandes-disponibles)
+- [Structure du dépôt](#-structure-du-dépôt)
+- [Architecture technique](#-architecture-technique)
+- [Modèle de simulation](#-modèle-de-simulation)
+- [Tests](#-tests)
+- [Intégration continue](#-intégration-continue-gitlab)
+- [Déploiement](#-déploiement)
+- [État actuel](#-état-actuel)
+- [Licence et contexte](#-licence-et-contexte)
+
+---
+
+## 👀 Aperçu du projet
+
+L’application simule une épidémie dans une population d’individus mobiles.
+
+Chaque individu possède un état sanitaire :
+
+| État | Description | Couleur affichée |
+|---|---|---|
+| `healthy` | Individu sain | 🟢 Vert |
+| `infected` | Individu infecté et contagieux | 🔴 Rouge |
+| `recovered` | Individu guéri | 🔵 Bleu |
+| `dead` | Individu mort après infection | ⚫ Gris foncé |
+
+La contamination dépend de plusieurs paramètres configurables :
+
+| Paramètre | Rôle |
+|---|---|
+| Nombre d’individus | Définit la taille de la population |
+| Patients zéro | Définit le nombre d’individus infectés au départ |
+| Facteur de transmission | Influence la probabilité de contamination |
+| Rayon d’infection | Définit la distance maximale de contamination |
+| Durée moyenne d’infection | Définit combien de temps un individu reste infecté |
+| Taux de guérison | Définit la probabilité de guérir après infection |
+| Vitesse de déplacement | Influence le mouvement des individus |
+| Vitesse de simulation | Accélère ou ralentit la simulation globale |
+
+---
+
+## ✨ Fonctionnalités principales
+
+| Catégorie | Fonctionnalités |
+|---|---|
+| 🧪 Simulation | Génération d’une population, patients zéro, propagation locale |
+| 🎨 Visualisation | Canvas dynamique avec p5.js, individus animés |
+| 📊 Statistiques | Compteurs en temps réel et graphique d’évolution |
+| 🧭 Contrôles | Démarrer, mettre en pause, reprendre, stopper et relancer |
+| ⚙️ Configuration | Modification de plusieurs paramètres pendant la simulation |
+| 🧱 Architecture | Séparation entre interface, rendu graphique et logique métier |
+| ✅ Qualité | Tests unitaires avec Vitest, lint avec ESLint |
+| 📱 Interface | Responsive pour ordinateur, tablette et mobile |
+| 🚀 Build | Build de production avec Vite |
+
+---
+
+## 🛠️ Technologies utilisées
+
+| Technologie | Utilisation |
+|---|---|
+| **React** | Interface utilisateur, composants et état global |
+| **p5.js** | Rendu graphique, animation et canvas |
+| **Chart.js** | Graphique d’évolution des états sanitaires |
+| **Vite** | Serveur de développement et build de production |
+| **Vitest** | Tests unitaires |
+| **ESLint** | Vérification de la qualité du code |
+| **CSS** | Mise en page, responsive et charte graphique |
+| **GitLab CI** | Exécution automatique des tests sur la branche `main` |
+
+---
+
+## 🚀 Installation
+
+### Prérequis
+
+Installer **Node.js** et **npm**.
+
+Vérifier les versions installées :
+
+```bash
+node --version
+npm --version
 ```
-cd existing_repo
-git remote add origin https://git.s2.rpn.ch/MazyadH1/patient-zero.git
-git branch -M main
-git push -uf origin main
+
+Le projet a été vérifié avec un environnement Node moderne compatible avec Vite.
+
+### Récupérer les dépendances
+
+Depuis la racine du dépôt :
+
+```bash
+cd PatientZero
+npm install
 ```
 
-## Integrate with your tools
+Pour une installation reproductible, notamment en CI :
 
-* [Set up project integrations](https://git.s2.rpn.ch/MazyadH1/patient-zero/-/settings/integrations)
+```bash
+cd PatientZero
+npm ci
+```
 
-## Collaborate with your team
+---
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+## ▶️ Lancer le projet
 
-## Test and Deploy
+Depuis la racine du dépôt :
 
-Use the built-in continuous integration in GitLab.
+```bash
+cd PatientZero
+npm run dev
+```
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+Vite affiche ensuite une URL locale, par exemple :
 
-***
+```txt
+http://localhost:5173/
+```
 
-# Editing this README
+> Si le port `5173` est déjà utilisé, Vite choisira automatiquement un autre port.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+---
 
-## Suggestions for a good README
+## 📦 Commandes disponibles
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Toutes les commandes doivent être exécutées dans le dossier `PatientZero/`.
 
-## Name
-Choose a self-explaining name for your project.
+| Commande | Description |
+|---|---|
+| `npm run dev` | Lance le serveur de développement Vite |
+| `npm run build` | Génère la version de production dans `dist/` |
+| `npm run preview` | Sert localement la version de production |
+| `npm run lint` | Analyse le code avec ESLint |
+| `npm run test` | Lance Vitest en mode interactif |
+| `npm run test:run` | Lance les tests une seule fois |
+| `npm run coverage` | Lance les tests avec couverture |
+| `npm run deploy` | Déploie le dossier `dist/` avec `gh-pages` |
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+---
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## ✅ Vérification complète avant rendu
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Avant de considérer une modification comme terminée, exécuter :
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```bash
+cd PatientZero
+npm run lint
+npm run test:run
+npm run build
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Résultat attendu :
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+- aucune erreur de lint ;
+- tous les tests passent ;
+- le build se termine correctement.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+> **Remarque :** Vite peut afficher un avertissement sur la taille du bundle JavaScript. Cet avertissement est connu et vient principalement des bibliothèques graphiques utilisées.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+---
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## 📁 Structure du dépôt
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+```txt
+patient-zero/
+├── Mockup/
+│   ├── Patient Zero.html
+│   ├── app.jsx
+│   └── ...
+└── PatientZero/
+    ├── package.json
+    ├── vite.config.js
+    ├── index.html
+    ├── public/
+    │   ├── Logo-Patient-Zero.png
+    │   └── favicon.png
+    └── src/
+        ├── App.jsx
+        ├── main.jsx
+        ├── components/
+        ├── constants/
+        ├── simulation/
+        ├── styles/
+        └── utils/
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Dossiers importants
 
-## License
-For open source projects, say how it is licensed.
+| Dossier | Rôle |
+|---|---|
+| `PatientZero/src/components/` | Composants React de l’interface |
+| `PatientZero/src/simulation/` | Logique métier testable sans React, p5.js ou Chart.js |
+| `PatientZero/src/constants/` | Valeurs par défaut et états possibles |
+| `PatientZero/src/styles/` | Styles globaux, layout et composants |
+| `PatientZero/docs/` | Documentation technique détaillée |
+| `Mockup/` | Maquette et références visuelles initiales |
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+---
+
+## 🧱 Architecture technique
+
+Le projet suit une séparation simple des responsabilités.
+
+```mermaid
+flowchart LR
+    UI[React<br/>Interface utilisateur] --> State[État global<br/>Simulation]
+    State --> Logic[src/simulation<br/>Logique métier]
+    Logic --> Canvas[p5.js<br/>Rendu graphique]
+    State --> Chart[Chart.js<br/>Graphique]
+    Logic --> Tests[Vitest<br/>Tests unitaires]
+```
+
+### React
+
+React gère :
+
+- l’interface ;
+- les panneaux de configuration ;
+- les contrôles ;
+- l’état global de la simulation ;
+- les statistiques ;
+- l’historique transmis au graphique.
+
+### p5.js
+
+p5.js gère :
+
+- le canvas ;
+- le dessin des individus ;
+- l’animation visuelle ;
+- la boucle de rendu.
+
+> La logique métier importante ne doit pas être cachée dans p5.js.
+
+### Chart.js
+
+Chart.js gère uniquement l’affichage du graphique.  
+Les données viennent de React et de la logique de simulation.
+
+### `src/simulation/`
+
+Ce dossier contient la logique pure :
+
+| Fichier | Rôle |
+|---|---|
+| `Individual.js` | Représente un individu |
+| `Population.js` | Génère et gère une population |
+| `infectionRules.js` | Calcule distance, infection, guérison et mortalité |
+| `updateSimulation.js` | Applique une étape logique de simulation |
+| `simulationCompletion.js` | Détecte la fin d’une simulation |
+| `chartHistory.js` | Prépare les données du graphique |
+
+Cette séparation permet de tester la simulation sans lancer l’interface.
+
+---
+
+## 🧬 Modèle de simulation
+
+La simulation repose sur un modèle volontairement simple et lisible :
+
+1. Une population est générée avec un nombre défini de patients zéro.
+2. Les individus se déplacent dans une zone limitée.
+3. Un individu infecté peut contaminer un individu sain proche.
+4. La probabilité de contamination dépend de la distance, du rayon d’infection et du facteur de transmission.
+5. Un individu infecté reste infecté pendant une durée configurée.
+6. À la fin de l’infection, il guérit ou meurt selon le taux de guérison.
+7. La simulation se termine quand il n’y a plus d’individus infectés.
+
+> La version actuelle ne réinfecte pas les individus guéris.
+
+---
+
+## 🧪 Tests
+
+Les tests unitaires se trouvent dans :
+
+```txt
+PatientZero/src/simulation/
+```
+
+Ils couvrent notamment :
+
+| Élément testé | Exemple |
+|---|---|
+| Individus | Création et transitions d’état |
+| Population | Génération et statistiques |
+| Infection | Distance, probabilité et contamination |
+| Mortalité | Passage vers l’état `dead` |
+| Temps | Évolution du temps de simulation |
+| Graphique | Historique des données |
+| Fin de simulation | Détection de l’arrêt logique |
+
+Commande :
+
+```bash
+cd PatientZero
+npm run test:run
+```
+
+---
+
+## 🔁 Intégration continue GitLab
+
+Le fichier `.gitlab-ci.yml` définit deux étapes :
+
+| Étape | Description |
+|---|---|
+| `test_patient_zero` | Installe les dépendances et lance les tests |
+| `sync_to_github` | Synchronise la branche `main` vers GitHub si les tests passent |
+
+La pipeline utilise l’image Docker `node:22` pour les tests.
+
+---
+
+## 📚 Documentation utile
+
+Plusieurs fichiers Markdown expliquent les choix techniques :
+
+| Document | Contenu |
+|---|---|
+| `CODEX.md` | Consignes principales de développement du projet |
+| `SIMULATION_MODEL.md` | Modèle de données de la simulation |
+| `mortality-implementation.md` | Ajout de la mortalité |
+| `FixTimeBug.md` | Correction du temps de simulation |
+| `RAPPORT_CODEX.md` | Rapport d’analyse et de nettoyage du code |
+| `NETTOYAGE_CODEX_DEVELOPPEMENT.md` | Résumé de nettoyage à la première personne |
+| `PatientZero/docs/` | Documentation ciblée sur certaines fonctionnalités |
+
+---
+
+## 🤝 Bonnes pratiques pour contribuer
+
+Avant de modifier le projet :
+
+1. Lire `CODEX.md`.
+2. Garder le code simple et compréhensible.
+3. Ne pas mélanger logique métier et rendu graphique.
+4. Ne pas ajouter de dépendance sans raison claire.
+5. Modifier uniquement ce qui est nécessaire.
+6. Ajouter ou adapter les tests si la logique métier change.
+7. Exécuter lint, tests et build avant de terminer.
+
+---
+
+## 🚢 Déploiement
+
+Le projet contient une configuration `homepage` et un script `deploy` utilisant `gh-pages`.
+
+### Build de production
+
+```bash
+cd PatientZero
+npm run build
+```
+
+### Preview locale du build
+
+```bash
+npm run preview
+```
+
+### Déploiement GitHub Pages
+
+```bash
+npm run deploy
+```
+
+---
+
+## 📍 État actuel
+
+Le projet contient déjà les fonctionnalités principales :
+
+- simulation visuelle ;
+- propagation ;
+- guérison ;
+- mortalité ;
+- graphique ;
+- contrôles ;
+- tests unitaires.
+
+### Améliorations possibles
+
+| Amélioration | Objectif |
+|---|---|
+| Messages de validation plus détaillés | Mieux guider l’utilisateur |
+| Optimisation de la recherche de voisins | Améliorer les performances avec une grande population |
+| Découpage du bundle | Réduire la taille JavaScript si nécessaire |
+| Mise à jour des anciens documents | Mentionner l’état `dead` partout où c’est utile |
+| Captures d’écran dans ce README | Améliorer la présentation visuelle du projet |
+
+---
+
+## 📄 Licence et contexte
+
+Ce projet est une application pédagogique de simulation d’épidémie réalisée dans le cadre d’un travail de développement.
+
+Le dépôt est marqué comme privé dans `package.json`.
+
+---
+
+<div align="center">
+
+**Patient Zero** — Simulation visuelle, pédagogique et testable d’une propagation épidémique.
+
+</div>
