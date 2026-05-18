@@ -438,8 +438,6 @@ Le projet contient déjà les fonctionnalités principales :
 
 Ce projet est une application pédagogique de simulation d’épidémie réalisée dans le cadre d’un travail de développement.
 
-Le dépôt est marqué comme privé dans `package.json`.
-
 ---
 
 <div align="center">
