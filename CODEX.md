@@ -11,6 +11,7 @@ L’application doit permettre à l’utilisateur de configurer une population, 
 - `healthy` : sain
 - `infected` : infecté
 - `recovered` : guéri
+- `dead` : mort
 
 Technologies retenues :
 
@@ -172,7 +173,7 @@ export const STATE_COLORS = {
 
 Le rapport peut être rédigé en français, mais le code doit rester en anglais pour respecter les conventions courantes de développement.
 
-Le texte afficher sur le site web doit être en français et tout ce qui concerne le code et qui n'est pas affiché en anglais
+Le texte affiché sur le site web doit être en français et tout ce qui concerne le code et qui n’est pas affiché à l’utilisateur doit rester en anglais
 
 ---
 
@@ -295,7 +296,7 @@ Règles importantes :
 
 Objectif réaliste :
 
-- simulation fluide pour environ 100 à 500 individus ;
+- simulation fluide pour environ 500 à 1500 individus ;
 - interface réactive ;
 - graphique lisible.
 
@@ -308,6 +309,7 @@ Le graphique doit afficher trois courbes :
 - Sains
 - Infectés
 - Guéris
+- Morts
 
 Règles :
 
@@ -442,13 +444,13 @@ L’application doit rester utilisable et compréhensible :
 - pas seulement la couleur pour comprendre les états si possible ;
 - interface lisible sur écran standard ;
 - messages d’erreur simples pour valeurs invalides.
-- si possible responsive pour tout les types d'écrans
+- si possible responsive pour tous les types d’écrans
 
 ---
 
 ## 17. Documentation attendue dans le code
 
-Fais en sorte que le code sois facilement documentable avec jsdoc.
+Fais en sorte que le code soit facilement documentable avec jsdoc.
 
 Ne pas commenter des évidences.
 
@@ -504,13 +506,13 @@ Lors d’une demande de modification :
 8. Signaler les risques ou hypothèses.
 9. Ne pas supprimer une fonctionnalité existante sans raison.
 10. Garder le projet simple : priorité à la réussite du TPI.
-11. A la fin de chaque actions, vérifier que tout fonctionne encore
+11. À la fin de chaque action, vérifier que tout fonctionne encore
 12. Ne modifier que ce que je demande et ce qu'il faut pour le bon fonctionnement (ne change pas ce qu'il n'y a pas besoin)
 13. Tu peux créer un fichier .md au même niveau que le fichier CODEX.md pour toute modification que tu fais que tout les développeur doivent savoir (dont toi). Par exemple un changement dans la charte graphique.
 14. Pas d'emoji dans le code
-15. Une fois que t'as finis de coder, génère les tests (des tests simple)
-16. Pour les parties de code pas implémenter, ajoute des commentaire "TODO" en expliquant ce qu'il reste à faire
-17. Ajoute des commentaire pour expliquer l'utilité de chaque fichiers et fonctions que tu créer et modifie.
+15. Une fois le développement terminé, génère les tests (des tests simple)
+16. Si une partie n’est volontairement pas implémentée, ajouter un commentaire TODO uniquement si cela aide réellement à comprendre une amélioration future. Éviter les TODO inutiles dans la version finale.
+17. Ajouter un commentaire ou une documentation JSDoc pour les fichiers et fonctions dont le rôle n’est pas immédiatement évident. Éviter les commentaires qui répètent simplement le code.
 
 ---
 
