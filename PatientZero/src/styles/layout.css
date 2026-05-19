@@ -408,7 +408,7 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .dashboard__visuals {
-    --simulation-canvas-height: min(72svh, 680px);
+    --visual-panel-body-height: 420px;
   }
 }
 
@@ -482,7 +482,6 @@
 
   .dashboard__visuals {
     --visual-panel-body-height: 340px;
-    --simulation-canvas-height: min(72svh, 620px);
   }
 
   .dashboard__sidebar {
