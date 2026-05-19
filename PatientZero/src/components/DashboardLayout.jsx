@@ -28,19 +28,31 @@ export function DashboardLayout({ header, stats, simulation, chart, controls, li
     <div className="app-shell">
       {header}
       <main className="dashboard">
-        <section className="dashboard__stats" id="stats" onClick={handleSectionSurfaceClick("stats")}>{stats}</section>
+        <section className="dashboard__stats" id="stats" onClick={handleSectionSurfaceClick("stats")}>
+          {stats}
+        </section>
 
         <section className="dashboard__main">
           <div className="dashboard__content">
             <div className="dashboard__visuals">
-              <div id="simulation" onClick={handleSectionSurfaceClick("simulation")}>{simulation}</div>
-              <div id="chart" onClick={handleSectionSurfaceClick("chart")}>{chart}</div>
+              <div id="simulation" onClick={handleSectionSurfaceClick("simulation")}>
+                {simulation}
+              </div>
+              <div id="chart" onClick={handleSectionSurfaceClick("chart")}>
+                {chart}
+              </div>
             </div>
-            <section className="dashboard__setup" id="setup" onClick={handleSectionSurfaceClick("setup")}>{setup}</section>
+            <section className="dashboard__setup" id="setup" onClick={handleSectionSurfaceClick("setup")}>
+              {setup}
+            </section>
           </div>
           <aside className="dashboard__sidebar">
-            <div id="controls" onClick={handleSectionSurfaceClick("controls")}>{controls}</div>
-            <div id="live-settings" onClick={handleSectionSurfaceClick("live-settings")}>{liveSettings}</div>
+            <div id="controls" onClick={handleSectionSurfaceClick("controls")}>
+              {controls}
+            </div>
+            <div id="live-settings" onClick={handleSectionSurfaceClick("live-settings")}>
+              {liveSettings}
+            </div>
           </aside>
         </section>
       </main>

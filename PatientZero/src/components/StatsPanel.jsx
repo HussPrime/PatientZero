@@ -22,9 +22,10 @@ export function StatsPanel({ stats }) {
     <div className="stats-grid" aria-label="Statistiques de simulation">
       {STAT_CARDS.map((card) => {
         const value = stats[card.key] ?? 0;
-        const percent = card.key === "total" ? 100 : (value / stats.total) * 100;
+        const percent = stats.total > 0
+          ? (card.key === "total" ? 100 : (value / stats.total) * 100)
+          : 0;
 
-        // TODO: Guard against total = 0 if user validation later allows an empty population.
         return (
           <article className={`stat-card stat-card--${card.color}`} key={card.key} onClick={handleStatCardClick}>
             <div className="stat-card__label">
