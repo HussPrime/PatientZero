@@ -1138,7 +1138,23 @@
     height: var(--visual-panel-body-height);
   }
 
+  .simulation-canvas--showing-result {
+    height: max(var(--visual-panel-body-height), 420px);
+  }
+
+  .simulation-result {
+    max-height: calc(100% - 24px);
+    gap: 9px;
+    padding: 14px;
+    overflow-y: auto;
+  }
+
   .simulation-result__metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .simulation-result__metrics span {
+    padding: 7px 4px;
   }
 }
