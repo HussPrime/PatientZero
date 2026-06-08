@@ -261,7 +261,7 @@ export function SimulationCanvas({
 
       <div
         ref={containerRef}
-        className="simulation-canvas"
+        className={`simulation-canvas${shouldShowResult ? " simulation-canvas--showing-result" : ""}`}
         aria-label="Zone de simulation, cliquer pour démarrer ou mettre en pause"
         onClick={handleCanvasClick}
         onKeyDown={handleCanvasKeyDown}
