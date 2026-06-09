@@ -9,6 +9,6 @@ export const DEFAULT_SETTINGS = {
   transmissionRate: 28,
   infectionRadius: 18,
   simulationSpeed: 1,
-  cureRate: 90
+  cureRate: 80
 };
 
